@@ -20,63 +20,16 @@ const seedDatabase = async () => {
     // Create Super Admin
     const admin = await Admin.create({
       name: "Super Admin",
-      email: "admin@example.com",
-      password: "admin123",
+      email: "olaniyisal@gmail.com",
+      password: "Kh@lid2165",
       role: "superadmin",
     });
 
     console.log("✅ Super Admin created:", admin.email);
 
-    // Create Sample MDAs
-    const mdas = await MDA.create([
-      {
-        name: "Ministry of Health",
-        reportUrl: "https://example.com/health-report",
-      },
-      {
-        name: "Ministry of Education",
-        reportUrl: "https://example.com/education-report",
-      },
-      {
-        name: "Ministry of Finance",
-        reportUrl: "https://example.com/finance-report",
-      },
-    ]);
-
-    console.log("✅ Sample MDAs created:", mdas.length);
-
-    // Create Sample Users
-    const users = await User.create([
-      {
-        name: "John Doe",
-        email: "john@health.gov",
-        password: "password123",
-        mdaId: mdas[0]._id,
-      },
-      {
-        name: "Jane Smith",
-        email: "jane@education.gov",
-        password: "password123",
-        mdaId: mdas[1]._id,
-      },
-      {
-        name: "Bob Johnson",
-        email: "bob@finance.gov",
-        password: "password123",
-        mdaId: mdas[2]._id,
-      },
-    ]);
-
-    console.log("✅ Sample Users created:", users.length);
-
     console.log("\n🎉 Database seeded successfully!");
     console.log("\n📋 Login Credentials:");
-    console.log("Super Admin: admin@example.com / admin123");
-    console.log("User 1: john@health.gov / password123 (Ministry of Health)");
-    console.log(
-      "User 2: jane@education.gov / password123 (Ministry of Education)"
-    );
-    console.log("User 3: bob@finance.gov / password123 (Ministry of Finance)");
+    console.log("Super Admin: olaniyisal@gmail.com / Kh@lid2165");
 
     process.exit(0);
   } catch (error) {
