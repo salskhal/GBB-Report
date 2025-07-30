@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Plus, Edit, Trash2, Eye, Building2 } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Building2 } from 'lucide-react';
 import { useMDAs, useDeleteMDA } from '@/hooks/useMDAs';
 import CreateMDAModal from '@/components/modals/CreateMDAModal';
 import UpdateMDAModal from '@/components/modals/UpdateMDAModal';
@@ -165,9 +165,7 @@ export default function MDAManagement() {
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <button className="text-blue-500 hover:text-blue-700 p-1 rounded">
-                    <Eye size={16} />
-                  </button>
+                  
                   <button 
                     className="text-gray-500 hover:text-gray-700 p-1 rounded"
                     onClick={() => handleUpdateMDA(mda)}
