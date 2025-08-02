@@ -118,21 +118,50 @@ export default function CreateUserModal({
           </div>
 
           <div>
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="username">Username</Label>
             <Input
-              id="email"
+              id="username"
+              {...register("username", {
+                required: "Username is required",
+                pattern: {
+                  value: /^[a-zA-Z0-9_-]+$/,
+                  message: "Username can only contain letters, numbers, underscores, and hyphens",
+                },
+                minLength: {
+                  value: 3,
+                  message: "Username must be at least 3 characters",
+                },
+                maxLength: {
+                  value: 50,
+                  message: "Username must be less than 50 characters",
+                },
+              })}
+              placeholder="e.g., john_doe or ministry_health"
+            />
+            {errors.username && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.username.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <Label htmlFor="contactEmail">Contact Email</Label>
+            <Input
+              id="contactEmail"
               type="email"
-              {...register("email", {
-                required: "Email is required",
+              {...register("contactEmail", {
+                required: "Contact email is required",
                 pattern: {
                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                   message: "Invalid email address",
                 },
               })}
+              placeholder="e.g., john.doe@ministry.gov"
             />
-            {errors.email && (
+            {errors.contactEmail && (
               <p className="text-sm text-red-500 mt-1">
-                {errors.email.message}
+                {errors.contactEmail.message}
               </p>
             )}
           </div>
@@ -158,25 +187,25 @@ export default function CreateUserModal({
           </div>
 
           <div>
-            <Label htmlFor="mdaId">MDA</Label>
+            <Label htmlFor="mdaReference">MDA</Label>
             <Select
               required
-              onValueChange={(value) => setValue("mdaId", value)}
+              onValueChange={(value) => setValue("mdaReference", value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select an MDA" />
               </SelectTrigger>
               <SelectContent>
                 {mdas.map((mda) => (
-                  <SelectItem key={mda._id} value={mda._id}>
+                  <SelectItem key={mda._id} value={mda.name}>
                     {mda.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            {errors.mdaId && (
+            {errors.mdaReference && (
               <p className="text-sm text-red-500 mt-1">
-                {errors.mdaId.message}
+                {errors.mdaReference.message}
               </p>
             )}
           </div>

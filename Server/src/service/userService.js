@@ -5,7 +5,7 @@ import MDA from '../models/MDA.js';
 export const getAllUsers = async () => {
   try {
     return await User.find()
-      .populate('mdaId', 'name')
+      .populate('mdaId', 'name reports')
       .select('-password');
   } catch (error) {
     throw error;
@@ -16,7 +16,7 @@ export const getAllUsers = async () => {
 export const getUserById = async (userId) => {
   try {
     const user = await User.findById(userId)
-      .populate('mdaId', 'name reportUrl')
+      .populate('mdaId', 'name reports')
       .select('-password');
     
     if (!user) {
@@ -48,7 +48,7 @@ export const createUser = async (userData) => {
     await user.save();
 
     return await User.findById(user._id)
-      .populate('mdaId', 'name')
+      .populate('mdaId', 'name reports')
       .select('-password');
   } catch (error) {
     throw error;
@@ -81,7 +81,7 @@ export const updateUser = async (userId, updateData) => {
       userId,
       updateData,
       { new: true, runValidators: true }
-    ).populate('mdaId', 'name').select('-password');
+    ).populate('mdaId', 'name reports').select('-password');
 
     if (!user) {
       throw new Error('User not found');

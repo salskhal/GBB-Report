@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { X } from 'lucide-react';
+import { useForm, useFieldArray } from 'react-hook-form';
+import { X, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,18 +29,36 @@ export default function UpdateMDAModal({ isOpen, onClose, mda }: UpdateMDAModalP
     handleSubmit,
     setValue,
     reset,
+    control,
     formState: { errors, isSubmitting },
-  } = useForm<UpdateMDARequest>();
+  } = useForm<UpdateMDARequest>({
+    defaultValues: {
+      name: '',
+      reports: [{ title: '', url: '', isActive: true }],
+      isActive: true
+    }
+  });
+
+  const { fields, append, remove, replace } = useFieldArray({
+    control,
+    name: 'reports'
+  });
 
   // Reset form when MDA changes or modal opens
   useEffect(() => {
     if (isOpen && mda) {
       reset();
       setValue('name', mda.name);
-      setValue('reportUrl', mda.reportUrl);
       setValue('isActive', mda.isActive);
+      
+      // Handle reports array - ensure at least one report exists
+      const reportsToSet = mda.reports && mda.reports.length > 0 
+        ? mda.reports 
+        : [{ title: '', url: '', isActive: true }];
+      
+      replace(reportsToSet);
     }
-  }, [isOpen, mda, reset, setValue]);
+  }, [isOpen, mda, reset, setValue, replace]);
 
   const onSubmit = async (data: UpdateMDARequest) => {
     if (!mda) return;
@@ -90,6 +108,16 @@ export default function UpdateMDAModal({ isOpen, onClose, mda }: UpdateMDAModalP
     onClose();
   };
 
+  const addReport = () => {
+    append({ title: '', url: '', isActive: true });
+  };
+
+  const removeReport = (index: number) => {
+    if (fields.length > 1) {
+      remove(index);
+    }
+  };
+
   if (!isOpen || !mda) return null;
 
   return (
@@ -124,26 +152,95 @@ export default function UpdateMDAModal({ isOpen, onClose, mda }: UpdateMDAModalP
             )}
           </div>
 
-          <div>
-            <Label htmlFor="reportUrl">Report URL</Label>
-            <Input
-              id="reportUrl"
-              {...register('reportUrl', { 
-                required: 'Report URL is required',
-                pattern: {
-                  value: /^https?:\/\/.+/,
-                  message: 'Please provide a valid URL (must start with http:// or https://)'
-                }
-              })}
-              placeholder="e.g., https://example.com/reports"
-            />
-            {errors.reportUrl && (
-              <p className="text-sm text-red-500 mt-1">{errors.reportUrl.message}</p>
-            )}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label>Reports</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addReport}
+                className="flex items-center gap-2"
+              >
+                <Plus size={16} />
+                Add Report
+              </Button>
+            </div>
+
+            {fields.map((field, index) => (
+              <div key={field.id} className="border rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium">Report {index + 1}</h4>
+                  {fields.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeReport(index)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 size={16} />
+                    </Button>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor={`reports.${index}.title`}>Report Title</Label>
+                  <Input
+                    id={`reports.${index}.title`}
+                    {...register(`reports.${index}.title`, { 
+                      required: 'Report title is required' 
+                    })}
+                    placeholder="e.g., Monthly Health Report"
+                  />
+                  {errors.reports?.[index]?.title && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.reports[index]?.title?.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor={`reports.${index}.url`}>Report URL</Label>
+                  <Input
+                    id={`reports.${index}.url`}
+                    {...register(`reports.${index}.url`, { 
+                      required: 'Report URL is required',
+                      pattern: {
+                        value: /^https?:\/\/.+/,
+                        message: 'Please provide a valid URL (must start with http:// or https://)'
+                      }
+                    })}
+                    placeholder="e.g., https://example.com/reports"
+                  />
+                  {errors.reports?.[index]?.url && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.reports[index]?.url?.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor={`reports.${index}.isActive`}>Report Status</Label>
+                  <Select 
+                    onValueChange={(value) => setValue(`reports.${index}.isActive`, value === 'true')} 
+                    defaultValue={field.isActive?.toString() || 'true'}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="true">Active</SelectItem>
+                      <SelectItem value="false">Inactive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            ))}
           </div>
 
           <div>
-            <Label htmlFor="isActive">Status</Label>
+            <Label htmlFor="isActive">MDA Status</Label>
             <Select onValueChange={(value) => setValue('isActive', value === 'true')} defaultValue={mda.isActive.toString()}>
               <SelectTrigger>
                 <SelectValue placeholder="Select status" />

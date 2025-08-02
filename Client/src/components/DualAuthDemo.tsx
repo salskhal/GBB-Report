@@ -30,9 +30,8 @@ export const DualAuthDemo = () => {
 
   // Demo credentials (you can customize these)
   const [userCredentials, setUserCredentials] = useState({
-    email: 'user@example.com',
-    password: 'password123',
-    mdaId: '' // This should be filled with actual MDA ID
+    username: 'demo_user',
+    password: 'password123'
   });
 
   const [adminCredentials, setAdminCredentials] = useState({
@@ -42,9 +41,8 @@ export const DualAuthDemo = () => {
 
   const handleUserLogin = async () => {
     const success = await login(
-      userCredentials.email,
-      userCredentials.password,
-      userCredentials.mdaId
+      userCredentials.username,
+      userCredentials.password
     );
     if (success) {
       console.log('User login successful');
@@ -141,7 +139,7 @@ export const DualAuthDemo = () => {
         {user ? (
           <div className="bg-blue-50 p-3 rounded-lg mb-3">
             <p className="text-sm"><strong>Name:</strong> {user.name}</p>
-            <p className="text-sm"><strong>Email:</strong> {user.email}</p>
+            <p className="text-sm"><strong>Email:</strong> {user.contactEmail}</p>
             <p className="text-sm"><strong>MDA:</strong> {user.mda.name}</p>
             <button
               onClick={logout}
@@ -154,10 +152,10 @@ export const DualAuthDemo = () => {
         ) : (
           <div className="space-y-2">
             <input
-              type="email"
-              placeholder="User Email"
-              value={userCredentials.email}
-              onChange={(e) => setUserCredentials(prev => ({ ...prev, email: e.target.value }))}
+              type="text"
+              placeholder="Username"
+              value={userCredentials.username}
+              onChange={(e) => setUserCredentials(prev => ({ ...prev, username: e.target.value }))}
               className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
             />
             <input
@@ -165,13 +163,6 @@ export const DualAuthDemo = () => {
               placeholder="User Password"
               value={userCredentials.password}
               onChange={(e) => setUserCredentials(prev => ({ ...prev, password: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-            />
-            <input
-              type="text"
-              placeholder="MDA ID"
-              value={userCredentials.mdaId}
-              onChange={(e) => setUserCredentials(prev => ({ ...prev, mdaId: e.target.value }))}
               className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
             />
             <button

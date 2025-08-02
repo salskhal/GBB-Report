@@ -39,8 +39,9 @@ export default function UpdateUserModal({ isOpen, onClose, user }: UpdateUserMod
     if (isOpen && user) {
       reset();
       setValue('name', user.name);
-      setValue('email', user.email);
-      setValue('mdaId', user.mdaId._id);
+      setValue('username', user.username);
+      setValue('contactEmail', user.contactEmail);
+      setValue('mdaReference', user.mdaReference);
       setValue('isActive', user.isActive);
     }
   }, [isOpen, user, reset, setValue]);
@@ -128,39 +129,66 @@ export default function UpdateUserModal({ isOpen, onClose, user }: UpdateUserMod
           </div>
 
           <div>
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="username">Username</Label>
             <Input
-              id="email"
+              id="username"
+              {...register('username', {
+                required: 'Username is required',
+                pattern: {
+                  value: /^[a-zA-Z0-9_-]+$/,
+                  message: 'Username can only contain letters, numbers, underscores, and hyphens',
+                },
+                minLength: {
+                  value: 3,
+                  message: 'Username must be at least 3 characters',
+                },
+                maxLength: {
+                  value: 50,
+                  message: 'Username must be less than 50 characters',
+                },
+              })}
+              placeholder="e.g., john_doe or ministry_health"
+            />
+            {errors.username && (
+              <p className="text-sm text-red-500 mt-1">{errors.username.message}</p>
+            )}
+          </div>
+
+          <div>
+            <Label htmlFor="contactEmail">Contact Email</Label>
+            <Input
+              id="contactEmail"
               type="email"
-              {...register('email', {
-                required: 'Email is required',
+              {...register('contactEmail', {
+                required: 'Contact email is required',
                 pattern: {
                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                   message: 'Invalid email address',
                 },
               })}
+              placeholder="e.g., john.doe@ministry.gov"
             />
-            {errors.email && (
-              <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
+            {errors.contactEmail && (
+              <p className="text-sm text-red-500 mt-1">{errors.contactEmail.message}</p>
             )}
           </div>
 
           <div>
-            <Label htmlFor="mdaId">MDA</Label>
-            <Select onValueChange={(value) => setValue('mdaId', value)} defaultValue={user.mdaId._id}>
+            <Label htmlFor="mdaReference">MDA</Label>
+            <Select onValueChange={(value) => setValue('mdaReference', value)} defaultValue={user.mdaReference}>
               <SelectTrigger>
                 <SelectValue placeholder="Select an MDA" />
               </SelectTrigger>
               <SelectContent>
                 {mdas.map((mda) => (
-                  <SelectItem key={mda._id} value={mda._id}>
+                  <SelectItem key={mda._id} value={mda.name}>
                     {mda.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            {errors.mdaId && (
-              <p className="text-sm text-red-500 mt-1">{errors.mdaId.message}</p>
+            {errors.mdaReference && (
+              <p className="text-sm text-red-500 mt-1">{errors.mdaReference.message}</p>
             )}
           </div>
 

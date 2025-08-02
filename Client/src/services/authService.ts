@@ -1,9 +1,8 @@
 import api from '@/lib/api';
 
 export interface LoginRequest {
-  email: string;
+  username: string;
   password: string;
-  mdaId: string;
 }
 
 export interface AdminLoginRequest {
@@ -19,12 +18,17 @@ export interface AuthResponse {
     user: {
       id: string;
       name: string;
-      email: string;
+      username: string;
+      contactEmail: string;
       role: string;
       mda: {
         id: string;
         name: string;
-        reportUrl: string;
+        reports: Array<{
+          title: string;
+          url: string;
+          isActive: boolean;
+        }>;
       };
     };
   };
@@ -47,7 +51,11 @@ export interface AdminAuthResponse {
 export interface MDA {
   _id: string;
   name: string;
-  reportUrl?: string;
+  reports: Array<{
+    title: string;
+    url: string;
+    isActive: boolean;
+  }>;
   isActive: boolean;
 }
 
@@ -62,11 +70,5 @@ export const authService = {
   adminLogin: async (credentials: AdminLoginRequest): Promise<AdminAuthResponse> => {
     const response = await api.post('/auth/admin/login', credentials);
     return response.data;
-  },
-
-  // Get MDAs for dropdown
-  getMDAs: async (): Promise<MDA[]> => {
-    const response = await api.get('/auth/mdas');
-    return response.data.data;
   },
 };

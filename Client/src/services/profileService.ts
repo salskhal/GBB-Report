@@ -3,12 +3,18 @@ import api from '@/lib/api';
 export interface UserProfile {
   _id: string;
   name: string;
-  email: string;
+  username: string;
+  contactEmail: string;
   role: string;
-  mdaId: {
+  mdaReference: string;
+  mda?: {
     _id: string;
     name: string;
-    reportUrl?: string;
+    reports?: Array<{
+      title: string;
+      url: string;
+      isActive: boolean;
+    }>;
   };
   isActive: boolean;
   lastLogin?: string;

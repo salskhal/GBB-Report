@@ -4,7 +4,7 @@ import DashboardLayout from "./layout/DashboardLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 import { useAuthStore } from "./store/authStore";
-import { AdminOverview, UserManagement, MDAManagement } from "./pages/admin";
+import { AdminOverview, UserManagement, MDAManagement, AdminManagement, ActivityLog } from "./pages/admin";
 import { AdminProtectedRoute } from "./components/AdminProtectedRoute";
 import AdminDashboardLayout from "./layout/AdminLayout";
 import { AuthProvider } from "./components/AuthProvider";
@@ -43,6 +43,8 @@ const App = () => {
             <Route index element={<AdminOverview />} />
             <Route path="users" element={<UserManagement />} />
             <Route path="mdas" element={<MDAManagement />} />
+            <Route path="admins" element={<AdminManagement />} />
+            <Route path="activities" element={<ActivityLog />} />
           </Route>
 
           {/* User dashboard */}

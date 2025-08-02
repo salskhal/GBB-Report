@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { X } from 'lucide-react';
+import { useForm, useFieldArray } from 'react-hook-form';
+import { X, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,8 +21,19 @@ export default function CreateMDAModal({ isOpen, onClose }: CreateMDAModalProps)
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors, isSubmitting },
-  } = useForm<CreateMDARequest>();
+  } = useForm<CreateMDARequest>({
+    defaultValues: {
+      name: '',
+      reports: [{ title: '', url: '', isActive: true }]
+    }
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'reports'
+  });
 
   const onSubmit = async (data: CreateMDARequest) => {
     try {
@@ -65,8 +76,22 @@ export default function CreateMDAModal({ isOpen, onClose }: CreateMDAModalProps)
   };
 
   const handleClose = () => {
-    reset();
+    reset({
+      name: '',
+      reports: [{ title: '', url: '', isActive: true }]
+    });
+    setSubmitError('');
     onClose();
+  };
+
+  const addReport = () => {
+    append({ title: '', url: '', isActive: true });
+  };
+
+  const removeReport = (index: number) => {
+    if (fields.length > 1) {
+      remove(index);
+    }
   };
 
   if (!isOpen) return null;
@@ -103,22 +128,75 @@ export default function CreateMDAModal({ isOpen, onClose }: CreateMDAModalProps)
             )}
           </div>
 
-          <div>
-            <Label htmlFor="reportUrl">Report URL</Label>
-            <Input
-              id="reportUrl"
-              {...register('reportUrl', { 
-                required: 'Report URL is required',
-                pattern: {
-                  value: /^https?:\/\/.+/,
-                  message: 'Please provide a valid URL (must start with http:// or https://)'
-                }
-              })}
-              placeholder="e.g., https://example.com/reports"
-            />
-            {errors.reportUrl && (
-              <p className="text-sm text-red-500 mt-1">{errors.reportUrl.message}</p>
-            )}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label>Reports</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addReport}
+                className="flex items-center gap-2"
+              >
+                <Plus size={16} />
+                Add Report
+              </Button>
+            </div>
+
+            {fields.map((field, index) => (
+              <div key={field.id} className="border rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium">Report {index + 1}</h4>
+                  {fields.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeReport(index)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 size={16} />
+                    </Button>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor={`reports.${index}.title`}>Report Title</Label>
+                  <Input
+                    id={`reports.${index}.title`}
+                    {...register(`reports.${index}.title`, { 
+                      required: 'Report title is required' 
+                    })}
+                    placeholder="e.g., Monthly Health Report"
+                  />
+                  {errors.reports?.[index]?.title && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.reports[index]?.title?.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor={`reports.${index}.url`}>Report URL</Label>
+                  <Input
+                    id={`reports.${index}.url`}
+                    {...register(`reports.${index}.url`, { 
+                      required: 'Report URL is required',
+                      pattern: {
+                        value: /^https?:\/\/.+/,
+                        message: 'Please provide a valid URL (must start with http:// or https://)'
+                      }
+                    })}
+                    placeholder="e.g., https://example.com/reports"
+                  />
+                  {errors.reports?.[index]?.url && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.reports[index]?.url?.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
 
           <div className="flex justify-end space-x-3 pt-4">

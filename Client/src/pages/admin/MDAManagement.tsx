@@ -56,6 +56,10 @@ export default function MDAManagement() {
   });
 
   const activeMDAs = mdas.filter(mda => mda.isActive).length;
+  const totalReports = mdas.reduce((total, mda) => total + (mda.reports?.length || 0), 0);
+  const activeReports = mdas.reduce((total, mda) => 
+    total + (mda.reports?.filter(report => report.isActive).length || 0), 0
+  );
 
   if (mdasLoading) {
     return (
@@ -91,7 +95,7 @@ export default function MDAManagement() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
@@ -111,6 +115,32 @@ export default function MDAManagement() {
             </div>
             <div className="p-3 rounded-full bg-green-500">
               <Building2 size={24} className="text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Total Reports</p>
+              <p className="text-2xl font-bold text-gray-900">{totalReports}</p>
+            </div>
+            <div className="p-3 rounded-full bg-purple-500">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Active Reports</p>
+              <p className="text-2xl font-bold text-gray-900">{activeReports}</p>
+            </div>
+            <div className="p-3 rounded-full bg-emerald-500">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
             </div>
           </div>
         </div>
@@ -155,14 +185,40 @@ export default function MDAManagement() {
                       {mda.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 mt-2">
-                    <a href={mda.reportUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline flex items-center">
-                      <span>Report URL</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    </a>
-                  </p>
+                  <div className="mt-3 space-y-2">
+                    <p className="text-sm font-medium text-gray-700">Reports ({mda.reports?.length || 0}):</p>
+                    {mda.reports && mda.reports.length > 0 ? (
+                      <div className="space-y-1">
+                        {mda.reports.map((report, index) => (
+                          <div key={index} className="flex items-center justify-between text-sm">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-gray-600">{report.title}</span>
+                              <span className={`px-2 py-0.5 rounded-full text-xs ${
+                                report.isActive 
+                                  ? 'bg-green-100 text-green-700' 
+                                  : 'bg-gray-100 text-gray-600'
+                              }`}>
+                                {report.isActive ? 'Active' : 'Inactive'}
+                              </span>
+                            </div>
+                            <a 
+                              href={report.url} 
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              className="text-blue-500 hover:text-blue-700 flex items-center"
+                              title={`Open ${report.title}`}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                            </a>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500 italic">No reports configured</p>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   

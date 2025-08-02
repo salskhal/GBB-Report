@@ -3,16 +3,28 @@ import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
+    username: {
+      type: String,
+      required: [true, "Username is required"],
+      unique: true,
+      trim: true,
+      lowercase: true,
+      minlength: [3, "Username must be at least 3 characters"],
+      maxlength: [50, "Username cannot exceed 50 characters"],
+      match: [
+        /^[a-zA-Z0-9._-]+$/,
+        "Username can only contain letters, numbers, dots, underscores, and hyphens",
+      ],
+    },
     name: {
       type: String,
       required: [true, "Name is required"],
       trim: true,
       maxlength: [50, "Name cannot exceed 50 characters"],
     },
-    email: {
+    contactEmail: {
       type: String,
-      required: [true, "Email is required"],
-      unique: true,
+      required: [true, "Contact email is required"],
       lowercase: true,
       trim: true,
       match: [
@@ -31,10 +43,15 @@ const userSchema = new mongoose.Schema(
       enum: ["user"],
       default: "user",
     },
+    mdaReference: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "MDA",
+      required: [true, "MDA reference is required"],
+    },
     mdaId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "MDA",
-      required: [true, "MDA assignment is required"],
+      required: [true, "MDA ID is required"],
     },
     isActive: {
       type: Boolean,
@@ -50,9 +67,11 @@ const userSchema = new mongoose.Schema(
 );
 
 // Index for faster queries
-userSchema.index({ email: 1 });
-userSchema.index({ mdaId: 1 });
+userSchema.index({ username: 1 }); // Unique index for username-based login
+userSchema.index({ contactEmail: 1 }); // Index for email searches
+userSchema.index({ mdaReference: 1 }); // Index for MDA-based queries
 userSchema.index({ isActive: 1 });
+userSchema.index({ username: 1, mdaReference: 1 }); // Compound index for authentication
 
 // Hash password before saving
 userSchema.pre("save", async function (next) {

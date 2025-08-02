@@ -85,12 +85,11 @@ export const useAuthStore = create<AuthState>()(
       },
 
       login: async (
-        email: string,
-        password: string,
-        mdaId: string
+        username: string,
+        password: string
       ): Promise<boolean> => {
         try {
-          const response = await authService.login({ email, password, mdaId });
+          const response = await authService.login({ username, password });
           
           if (response.success) {
             const { token, user } = response.data;
@@ -128,7 +127,8 @@ export const useAuthStore = create<AuthState>()(
               _id: admin.id,
               name: admin.name,
               email: admin.email,
-              role: admin.role,
+              role: admin.role as 'admin' | 'superadmin',
+              canBeDeleted: true, // Default value
               isActive: true, // Assume active if login successful
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),

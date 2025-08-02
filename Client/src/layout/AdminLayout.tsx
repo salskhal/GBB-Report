@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { Menu, ChevronDown, User, LogOut, Home, Users, Building2 } from "lucide-react";
+import { Menu, ChevronDown, User, LogOut, Home, Users, Building2, Shield, Activity } from "lucide-react";
 import { galaxyWhite } from "@/assets";
 import { useAuthStore } from "@/store/authStore";
 
@@ -49,6 +49,20 @@ export default function AdminDashboardLayout({
     },
   ];
 
+  // Add admin management for super admins only
+  if (admin?.role === 'superadmin') {
+    navItems.push({
+      path: "/admin/dashboard/admins",
+      label: "Admins",
+      icon: <Shield size={20} />,
+    });
+    navItems.push({
+      path: "/admin/dashboard/activities",
+      label: "Activity Log",
+      icon: <Activity size={20} />,
+    });
+  }
+
   // Handle window resize for responsive behavior
   useEffect(() => {
     const handleResize = (): void => {
@@ -81,6 +95,10 @@ export default function AdminDashboardLayout({
         return "User Management";
       case "mdas":
         return "MDA Management";
+      case "admins":
+        return "Admin Management";
+      case "activities":
+        return "Activity Log";
       default:
         return "Admin Dashboard";
     }

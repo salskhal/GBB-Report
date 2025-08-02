@@ -70,11 +70,14 @@ export default function UserManagement() {
     }
   };
 
+  console.log("Users:", users);
+
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesMDA = selectedMDA === "" || user.mdaId?._id === selectedMDA;
+      user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.contactEmail.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesMDA = selectedMDA === "" || user.mdaReference === selectedMDA;
     const matchesStatus =
       selectedStatus === "" ||
       (selectedStatus === "Active" && user.isActive) ||
@@ -132,7 +135,7 @@ export default function UserManagement() {
             />
             <input
               type="text"
-              placeholder="Search users..."
+              placeholder="Search by name, username, or email..."
               className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -145,7 +148,7 @@ export default function UserManagement() {
           >
             <option value="">All MDAs</option>
             {mdas.map((mda) => (
-              <option key={mda._id} value={mda._id}>
+              <option key={mda._id} value={mda.name}>
                 {mda.name}
               </option>
             ))}
@@ -183,11 +186,18 @@ export default function UserManagement() {
                       {user.isActive ? "Active" : "Inactive"}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-500 mt-1">{user.email}</p>
+                  <div className="mt-1 space-y-1">
+                    <p className="text-sm text-gray-600">
+                      <span className="font-medium">Username:</span> {user.username}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      <span className="font-medium">Contact:</span> {user.contactEmail}
+                    </p>
+                  </div>
                   <p className="text-sm text-gray-600 mt-2">
                     <span className="flex items-center">
                       <Building2 size={16} className="text-gray-400 mr-2" />
-                      {user.mdaId?.name || "No MDA assigned"}
+                      {user.mdaReference || "No MDA assigned"}
                     </span>
                   </p>
                 </div>
