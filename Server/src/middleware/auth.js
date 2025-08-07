@@ -38,10 +38,21 @@ export const authorizeUser = (req, res, next) => {
 
 // Middleware to authorize admin role
 export const authorizeAdmin = (req, res, next) => {
-  if (req.user.role !== "superadmin") {
+  if (req.user.role !== "superadmin" && req.user.role !== "admin") {
     return res.status(403).json({
       success: false,
       message: "Access denied. Admin role required.",
+    });
+  }
+  next();
+};
+
+// Middleware to authorize super admin role only
+export const authorizeSuperAdmin = (req, res, next) => {
+  if (req.user.role !== "superadmin") {
+    return res.status(403).json({
+      success: false,
+      message: "Access denied. Super admin role required.",
     });
   }
   next();
@@ -54,8 +65,17 @@ export const checkUserStatus = async (req, res, next) => {
 
     if (req.user.role === "user") {
       user = await User.findById(req.user.userId);
-    } else if (req.user.role === "superadmin") {
+    } else if (req.user.role === "superadmin" || req.user.role === "admin") {
       user = await Admin.findById(req.user.adminId);
+      // Set req.admin for activity logging
+      if (user) {
+        req.admin = {
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
+          role: user.role
+        };
+      }
     }
 
     if (!user || !user.isActive) {
@@ -79,5 +99,6 @@ export default {
   authenticate,
   authorizeUser,
   authorizeAdmin,
+  authorizeSuperAdmin,
   checkUserStatus,
 };

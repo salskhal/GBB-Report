@@ -1,14 +1,15 @@
 {
- "name": "report-admin-backend",
+  "name": "report-admin-backend",
   "version": "1.0.0",
-   "description": "Backend API for Report Admin Dashboard",
+  "description": "Backend API for Report Admin Dashboard",
   "main": "src/app.js",
   "type": "module",
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
-    "test": "jest",
-    "seed": "node src/seed/seed.js"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "seed": "node src/seed/seed.js",
+    "seed:superadmin": "node src/seed/seedSuperAdmin.js"
   },
   "keywords": [],
   "author": "",
@@ -29,5 +30,8 @@
     "jest": "^30.0.4",
     "nodemon": "^3.1.10",
     "supertest": "^7.1.3"
+  },
+  "jest": {
+    "transform": {}
   }
 }

@@ -15,16 +15,14 @@ export const handleValidationErrors = (req, res, next) => {
 
 // User login validation
 export const validateUserLogin = [
-  body('email')
-    .isEmail()
-    .normalizeEmail()
-    .withMessage('Please provide a valid email'),
+  body('username')
+    .trim()
+    .isLength({ min: 3, max: 50 })
+    .matches(/^[a-zA-Z0-9._-]+$/)
+    .withMessage('Username must be 3-50 characters and contain only letters, numbers, dots, underscores, and hyphens'),
   body('password')
     .isLength({ min: 6 })
     .withMessage('Password must be at least 6 characters'),
-  body('mdaId')
-    .isMongoId()
-    .withMessage('Please provide a valid MDA ID'),
   handleValidationErrors
 ];
 
@@ -46,16 +44,21 @@ export const validateUserCreation = [
     .trim()
     .isLength({ min: 2, max: 50 })
     .withMessage('Name must be between 2 and 50 characters'),
-  body('email')
+  body('username')
+    .trim()
+    .isLength({ min: 3, max: 50 })
+    .matches(/^[a-zA-Z0-9._-]+$/)
+    .withMessage('Username must be 3-50 characters and contain only letters, numbers, dots, underscores, and hyphens'),
+  body('contactEmail')
     .isEmail()
     .normalizeEmail()
-    .withMessage('Please provide a valid email'),
+    .withMessage('Please provide a valid contact email'),
   body('password')
     .isLength({ min: 6 })
     .withMessage('Password must be at least 6 characters'),
   body('mdaId')
     .isMongoId()
-    .withMessage('Please provide a valid MDA ID'),
+    .withMessage('MDA ID must be a valid MongoDB ObjectId'),
   handleValidationErrors
 ];
 
@@ -65,9 +68,16 @@ export const validateMDACreation = [
     .trim()
     .isLength({ min: 2, max: 100 })
     .withMessage('MDA name must be between 2 and 100 characters'),
-  body('reportUrl')
+  body('reports')
+    .isArray({ min: 1 })
+    .withMessage('At least one report is required'),
+  body('reports.*.title')
+    .trim()
+    .isLength({ min: 1, max: 100 })
+    .withMessage('Report title must be between 1 and 100 characters'),
+  body('reports.*.url')
     .isURL()
-    .withMessage('Please provide a valid URL'),
+    .withMessage('Please provide a valid report URL'),
   handleValidationErrors
 ];
 

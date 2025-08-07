@@ -103,10 +103,18 @@ export const Profile = () => {
             </div>
 
             <div className="flex items-center gap-3">
+              <User className="h-5 w-5 text-gray-500" />
+              <div>
+                <Label className="text-sm font-medium text-gray-500">Username</Label>
+                <p className="text-lg">{profile?.username}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
               <Mail className="h-5 w-5 text-gray-500" />
               <div>
-                <Label className="text-sm font-medium text-gray-500">Email</Label>
-                <p className="text-lg">{profile?.email}</p>
+                <Label className="text-sm font-medium text-gray-500">Contact Email</Label>
+                <p className="text-lg">{profile?.contactEmail}</p>
               </div>
             </div>
 
@@ -124,7 +132,7 @@ export const Profile = () => {
               <Building className="h-5 w-5 text-gray-500" />
               <div>
                 <Label className="text-sm font-medium text-gray-500">MDA</Label>
-                <p className="text-lg">{profile?.mdaId?.name}</p>
+                <p className="text-lg">{profile?.mda?.name || profile?.mdaReference}</p>
               </div>
             </div>
 

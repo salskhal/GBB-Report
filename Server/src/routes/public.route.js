@@ -1,5 +1,5 @@
 import express from "express";
-import { loginUser, loginAdmin, getMDAs } from "../controller/auth.controller.js";
+import { loginUser, loginAdmin,  } from "../controller/auth.controller.js";
 import { getAllMDAs } from "../controller/mda.controller.js";
 import {
   validateUserLogin,
@@ -12,7 +12,7 @@ const router = express.Router();
 // @desc    Get all MDAs for login dropdown
 // @route   GET /api/public/mdas
 // @access  Public
-router.get("/mdas", getMDAs);
+// router.get("/mdas", getMDAs);  
 
 // Health Check Route
 // @desc    API health check

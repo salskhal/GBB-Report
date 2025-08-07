@@ -28,10 +28,34 @@ const adminSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["superadmin"],
-      default: "superadmin",
+      enum: {
+        values: ["superadmin", "admin"],
+        message: "Role must be either 'superadmin' or 'admin'",
+      },
+      default: "admin",
     },
-   
+    canBeDeleted: {
+      type: Boolean,
+      default: true,
+      validate: {
+        validator: function(value) {
+          // Super admin cannot be deleted
+          if (this.role === "superadmin" && value === true) {
+            return false;
+          }
+          return true;
+        },
+        message: "Super admin cannot be set as deletable",
+      },
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Admin",
+      required: function() {
+        // CreatedBy is required for regular admins, but not for super admin
+        return this.role !== "superadmin";
+      },
+    },
     isActive: {
       type: Boolean,
       default: true,
@@ -47,7 +71,18 @@ const adminSchema = new mongoose.Schema(
 
 // Index for faster queries
 adminSchema.index({ email: 1 });
+adminSchema.index({ role: 1 });
+adminSchema.index({ isActive: 1 });
+adminSchema.index({ createdBy: 1 });
 
+
+// Set canBeDeleted to false for super admin
+adminSchema.pre("save", function (next) {
+  if (this.role === "superadmin") {
+    this.canBeDeleted = false;
+  }
+  next();
+});
 
 // Hash password before saving
 adminSchema.pre("save", async function (next) {

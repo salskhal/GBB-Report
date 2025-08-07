@@ -16,20 +16,14 @@ export const verifyToken = (token) => {
 };
 
 // User login
-export const loginUser = async (email, password, mdaId) => {
+export const loginUser = async (username, password) => {
   try {
-    // Find user by email and populate MDA
-    const user = await User.findOne({ email, isActive: true })
-      .select('+password')
-      .populate('mdaId');
+    // Find user by username
+    const user = await User.findOne({ username, isActive: true })
+      .select('+password');
 
     if (!user) {
       throw new Error('Invalid credentials');
-    }
-
-    // Check if user belongs to the selected MDA
-    if (user.mdaId._id.toString() !== mdaId) {
-      throw new Error('User not authorized for selected MDA');
     }
 
     // Check password
@@ -38,34 +32,45 @@ export const loginUser = async (email, password, mdaId) => {
       throw new Error('Invalid credentials');
     }
 
+    // Find MDA by reference
+    const mda = await MDA.findOne({ _id: user.mdaId, isActive: true });
+    if (!mda) {
+      throw new Error('MDA not found or inactive');
+    }
+
     // Update last login
     user.lastLogin = new Date();
     await user.save();
 
-    // Generate token
+    // Generate token with username and MDA information
     const token = generateToken({
       userId: user._id,
-      email: user.email,
+      username: user.username,
       role: user.role,
-      mdaId: user.mdaId._id
+      mdaId: user.mdaId
     });
+
+
+    // Filter active reports at the database level
+    const activeReports = mda.reports.filter(report => report.isActive);
 
     return {
       token,
       user: {
         id: user._id,
         name: user.name,
-        email: user.email,
+        username: user.username,
+        contactEmail: user.contactEmail,
         role: user.role,
-        // mdaId: user.mdaId._id
         mda: {
-          id: user.mdaId._id,
-          name: user.mdaId.name,
-          reportUrl: user.mdaId.reportUrl
+          id: mda._id,
+          name: mda.name,
+          reports: activeReports,
         }
       }
     };
   } catch (error) {
+    
     throw error;
   }
 };
@@ -112,20 +117,12 @@ export const loginAdmin = async (email, password) => {
   }
 };
 
-// Get all MDAs for login dropdown
-export const getMDAs = async () => {
-  try {
-    return await MDA.find({ isActive: true }).select('name');
-  } catch (error) {
-    throw error;
-  }
-};
+
 
 // Default export object for backward compatibility
 export default {
   generateToken,
   verifyToken,
   loginUser,
-  loginAdmin,
-  getMDAs
+  loginAdmin
 };

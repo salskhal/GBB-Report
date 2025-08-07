@@ -1,16 +1,19 @@
 import { useState } from 'react';
-import { Search, Plus, Edit, Trash2, Building2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, Plus, Building2 } from 'lucide-react';
 import { useMDAs, useDeleteMDA } from '@/hooks/useMDAs';
-import CreateMDAModal from '@/components/modals/CreateMDAModal';
-import UpdateMDAModal from '@/components/modals/UpdateMDAModal';
+import { useLayoutPreference } from '@/hooks/useLayoutPreference';
 import DeleteConfirmationModal from '@/components/modals/DeleteConfirmationModal';
+import MDACardView from '@/components/MDACardView';
+import MDATableView from '@/components/MDATableView';
+import LayoutToggle from '@/components/LayoutToggle';
 import type { MDA } from '@/services/adminService';
 
 export default function MDAManagement() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [currentLayout, setCurrentLayout] = useLayoutPreference('mdas', 'card');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedMDA, setSelectedMDA] = useState<MDA | null>(null);
 
@@ -19,8 +22,7 @@ export default function MDAManagement() {
   const deleteMDAMutation = useDeleteMDA();
 
   const handleUpdateMDA = (mda: MDA) => {
-    setSelectedMDA(mda);
-    setIsUpdateModalOpen(true);
+    navigate(`/admin/dashboard/mdas/update/${mda._id}`);
   };
 
   const handleDeleteMDA = (mda: MDA) => {
@@ -40,12 +42,7 @@ export default function MDAManagement() {
     }
   };
 
-  const getStatusBadge = (isActive: boolean) => {
-    const baseClasses = "px-2 py-1 rounded-full text-xs font-medium";
-    return isActive
-      ? `${baseClasses} bg-green-100 text-green-800`
-      : `${baseClasses} bg-red-100 text-red-800`;
-  };
+
 
   const filteredMDAs = mdas.filter(mda => {
     const matchesSearch = mda.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -56,6 +53,10 @@ export default function MDAManagement() {
   });
 
   const activeMDAs = mdas.filter(mda => mda.isActive).length;
+  const totalReports = mdas.reduce((total, mda) => total + (mda.reports?.length || 0), 0);
+  const activeReports = mdas.reduce((total, mda) => 
+    total + (mda.reports?.filter(report => report.isActive).length || 0), 0
+  );
 
   if (mdasLoading) {
     return (
@@ -81,17 +82,23 @@ export default function MDAManagement() {
           <h1 className="text-2xl font-bold text-gray-900">MDA Management</h1>
           <p className="text-gray-600 mt-2">Manage Ministries, Departments, and Agencies</p>
         </div>
-        <button 
-          onClick={() => setIsCreateModalOpen(true)}
-          className="mt-4 sm:mt-0 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
-        >
-          <Plus size={16} />
-          <span>Add MDA</span>
-        </button>
+        <div className="flex items-center space-x-3 mt-4 sm:mt-0">
+          <LayoutToggle
+            currentLayout={currentLayout}
+            onLayoutChange={setCurrentLayout}
+          />
+          <button 
+            onClick={() => navigate('/admin/dashboard/mdas/create')}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+          >
+            <Plus size={16} />
+            <span>Add MDA</span>
+          </button>
+        </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
@@ -111,6 +118,32 @@ export default function MDAManagement() {
             </div>
             <div className="p-3 rounded-full bg-green-500">
               <Building2 size={24} className="text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Total Reports</p>
+              <p className="text-2xl font-bold text-gray-900">{totalReports}</p>
+            </div>
+            <div className="p-3 rounded-full bg-purple-500">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Active Reports</p>
+              <p className="text-2xl font-bold text-gray-900">{activeReports}</p>
+            </div>
+            <div className="p-3 rounded-full bg-emerald-500">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
             </div>
           </div>
         </div>
@@ -141,57 +174,22 @@ export default function MDAManagement() {
         </div>
       </div>
 
-      {/* MDA Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {filteredMDAs.map((mda) => (
-          <div key={mda._id} className="bg-white rounded-lg shadow-sm border border-gray-200">
-            <div className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2">
-                    <Building2 size={20} className="text-gray-500" />
-                    <h3 className="text-lg font-semibold text-gray-900">{mda.name}</h3>
-                    <span className={getStatusBadge(mda.isActive)}>
-                      {mda.isActive ? 'Active' : 'Inactive'}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mt-2">
-                    <a href={mda.reportUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline flex items-center">
-                      <span>Report URL</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    </a>
-                  </p>
-                </div>
-                <div className="flex items-center space-x-2">
-                  
-                  <button 
-                    className="text-gray-500 hover:text-gray-700 p-1 rounded"
-                    onClick={() => handleUpdateMDA(mda)}
-                  >
-                    <Edit size={16} />
-                  </button>
-                  <button 
-                    className="text-red-500 hover:text-red-700 p-1 rounded"
-                    onClick={() => handleDeleteMDA(mda)}
-                    disabled={deleteMDAMutation.isPending}
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-              
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span>Created: {new Date(mda.createdAt).toLocaleDateString()}</span>
-                  <span>Last updated: {new Date(mda.updatedAt).toLocaleDateString()}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* MDA Display */}
+      {currentLayout === 'card' ? (
+        <MDACardView
+          mdas={filteredMDAs}
+          onUpdateMDA={handleUpdateMDA}
+          onDeleteMDA={handleDeleteMDA}
+          isDeleting={deleteMDAMutation.isPending}
+        />
+      ) : (
+        <MDATableView
+          mdas={filteredMDAs}
+          onUpdateMDA={handleUpdateMDA}
+          onDeleteMDA={handleDeleteMDA}
+          isDeleting={deleteMDAMutation.isPending}
+        />
+      )}
 
       {/* Pagination */}
       <div className="flex items-center justify-between bg-white px-6 py-3 border border-gray-200 rounded-lg">
@@ -210,19 +208,6 @@ export default function MDAManagement() {
           </button>
         </div>
       </div>
-
-      {/* Create MDA Modal */}
-      <CreateMDAModal 
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-      />
-
-      {/* Update MDA Modal */}
-      <UpdateMDAModal 
-        isOpen={isUpdateModalOpen}
-        onClose={() => setIsUpdateModalOpen(false)}
-        mda={selectedMDA}
-      />
 
       {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal

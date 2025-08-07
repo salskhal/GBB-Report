@@ -4,7 +4,7 @@ import DashboardLayout from "./layout/DashboardLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 import { useAuthStore } from "./store/authStore";
-import { AdminOverview, UserManagement, MDAManagement } from "./pages/admin";
+import { AdminOverview, UserManagement, MDAManagement, CreateMDA, UpdateMDA, AdminManagement, ActivityLog, DataExport } from "./pages/admin";
 import { AdminProtectedRoute } from "./components/AdminProtectedRoute";
 import AdminDashboardLayout from "./layout/AdminLayout";
 import { AuthProvider } from "./components/AuthProvider";
@@ -43,6 +43,11 @@ const App = () => {
             <Route index element={<AdminOverview />} />
             <Route path="users" element={<UserManagement />} />
             <Route path="mdas" element={<MDAManagement />} />
+            <Route path="mdas/create" element={<CreateMDA />} />
+            <Route path="mdas/update/:id" element={<UpdateMDA />} />
+            <Route path="admins" element={<AdminManagement />} />
+            <Route path="activities" element={<ActivityLog />} />
+            <Route path="export" element={<DataExport />} />
           </Route>
 
           {/* User dashboard */}

@@ -11,8 +11,8 @@ export const Overview: React.FC = () => {
     if (user?.name) {
       return user.name;
     }
-    if (user?.email) {
-      const name = user.email.split("@")[0];
+    if (user?.contactEmail) {
+      const name = user.contactEmail.split("@")[0];
       return name.charAt(0).toUpperCase() + name.slice(1);
     }
     return "User";
@@ -55,7 +55,7 @@ export const Overview: React.FC = () => {
                   <p className="text-sm text-indigo-700 mt-1">
                     Organization: {user?.mda.name || "Not specified"}
                   </p>
-                  <p className="text-xs text-indigo-600 mt-1">{user?.email}</p>
+                  <p className="text-xs text-indigo-600 mt-1">{user?.contactEmail}</p>
                 </div>
               </div>
             </div>

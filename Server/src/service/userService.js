@@ -5,7 +5,7 @@ import MDA from '../models/MDA.js';
 export const getAllUsers = async () => {
   try {
     return await User.find()
-      .populate('mdaId', 'name')
+      .populate('mdaId', 'name reports')
       .select('-password');
   } catch (error) {
     throw error;
@@ -16,7 +16,7 @@ export const getAllUsers = async () => {
 export const getUserById = async (userId) => {
   try {
     const user = await User.findById(userId)
-      .populate('mdaId', 'name reportUrl')
+      .populate('mdaId', 'name reports')
       .select('-password');
     
     if (!user) {
@@ -39,16 +39,16 @@ export const createUser = async (userData) => {
     }
 
     // Check if email already exists
-    const existingUser = await User.findOne({ email: userData.email });
+    const existingUser = await User.findOne({ username: userData.username });
     if (existingUser) {
-      throw new Error('Email already registered');
+      throw new Error('Username already registered');
     }
 
     const user = new User(userData);
     await user.save();
 
     return await User.findById(user._id)
-      .populate('mdaId', 'name')
+      .populate('mdaId', 'name reports')
       .select('-password');
   } catch (error) {
     throw error;
@@ -66,22 +66,33 @@ export const updateUser = async (userId, updateData) => {
       }
     }
 
-    // If updating email, check for duplicates
-    if (updateData.email) {
+    // If updating usernname, 
+    if (updateData.username) {
       const existingUser = await User.findOne({
-        email: updateData.email,
+        username: updateData.username,
         _id: { $ne: userId }
       });
       if (existingUser) {
-        throw new Error('Email already registered');
+        throw new Error('Username already registered');
       }
     }
+
+
+    // if (updateData.email) {
+    //   const existingUser = await User.findOne({
+    //     email: updateData.email,
+    //     _id: { $ne: userId }
+    //   });
+    //   if (existingUser) {
+    //     throw new Error('Email already registered');
+    //   }
+    // }
 
     const user = await User.findByIdAndUpdate(
       userId,
       updateData,
       { new: true, runValidators: true }
-    ).populate('mdaId', 'name').select('-password');
+    ).populate('mdaId', 'name reports').select('-password');
 
     if (!user) {
       throw new Error('User not found');

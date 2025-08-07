@@ -23,6 +23,7 @@ await connectDB();
 // Security middleware
 app.use(helmet());
 
+
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -37,7 +38,7 @@ app.use(
     origin:
       process.env.NODE_ENV === "production"
         ? ["https://yourdomain.com"]
-        : ["http://localhost:5175", "http://localhost:5173"],
+        : ["http://localhost:5174", "http://localhost:5173"],
     credentials: true,
   })
 );

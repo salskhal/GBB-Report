@@ -96,9 +96,9 @@ export default function DashboardLayout({
     if (user?.name) {
       return user.name;
     }
-    if (user?.email) {
+    if (user?.contactEmail) {
       // Extract name from email or use email
-      const name = user.email.split("@")[0];
+      const name = user.contactEmail.split("@")[0];
       return name.charAt(0).toUpperCase() + name.slice(1);
     }
     return "User";
@@ -195,7 +195,7 @@ export default function DashboardLayout({
                 <span className="font-medium text-gray-700">
                   {getUserDisplayName()}
                 </span>
-                <span className="text-xs text-gray-500">{user?.email}</span>
+                <span className="text-xs text-gray-500">{user?.contactEmail}</span>
               </div>
 
               {/* Profile dropdown */}
@@ -226,7 +226,7 @@ export default function DashboardLayout({
                       <p className="text-sm font-medium text-gray-900">
                         {getUserDisplayName()}
                       </p>
-                      <p className="text-xs text-gray-500">{user?.email}</p>
+                      <p className="text-xs text-gray-500">{user?.contactEmail}</p>
                       <p className="text-xs text-gray-500">{getUserRole()}</p>
                     </div>
                     <button

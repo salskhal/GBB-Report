@@ -2,25 +2,24 @@ import { useState } from "react";
 import {
   Search,
   Plus,
-  Edit,
-  Trash2,
-  Building2,
-  Calendar,
-  User,
-  Shield,
 } from "lucide-react";
 import { useUsers, useDeleteUser } from "@/hooks/useUsers";
 import { useMDAs } from "@/hooks/useMDAs";
+import { useLayoutPreference } from "@/hooks/useLayoutPreference";
 import CreateUserModal from "@/components/modals/CreateUserModal";
 import UpdateUserModal from "@/components/modals/UpdateUserModal";
 import DeleteConfirmationModal from "@/components/modals/DeleteConfirmationModal";
 import { ResetPasswordModal } from "@/components/modals/ResetPasswordModal";
+import UserCardView from "@/components/UserCardView";
+import UserTableView from "@/components/UserTableView";
+import LayoutToggle from "@/components/LayoutToggle";
 import type { AdminUser } from "@/services/adminService";
 
 export default function UserManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMDA, setSelectedMDA] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [currentLayout, setCurrentLayout] = useLayoutPreference('users', 'card');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -35,13 +34,6 @@ export default function UserManagement() {
   } = useUsers();
   const { data: mdas = [], isLoading: mdasLoading } = useMDAs();
   const deleteUserMutation = useDeleteUser();
-
-  const getStatusBadge = (isActive: boolean) => {
-    const baseClasses = "px-2 py-1 rounded-full text-xs font-medium";
-    return isActive
-      ? `${baseClasses} bg-green-100 text-green-800`
-      : `${baseClasses} bg-red-100 text-red-800`;
-  };
 
   const handleUpdateUser = (user: AdminUser) => {
     setSelectedUser(user);
@@ -70,10 +62,13 @@ export default function UserManagement() {
     }
   };
 
+  console.log("Users:", users);
+
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase());
+      user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.contactEmail.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesMDA = selectedMDA === "" || user.mdaId?._id === selectedMDA;
     const matchesStatus =
       selectedStatus === "" ||
@@ -113,13 +108,19 @@ export default function UserManagement() {
             Manage system users and their access
           </p>
         </div>
-        <button
-          onClick={() => setIsCreateModalOpen(true)}
-          className="mt-4 sm:mt-0 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
-        >
-          <Plus size={16} />
-          <span>Add User</span>
-        </button>
+        <div className="flex items-center space-x-3 mt-4 sm:mt-0">
+          <LayoutToggle
+            currentLayout={currentLayout}
+            onLayoutChange={setCurrentLayout}
+          />
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+          >
+            <Plus size={16} />
+            <span>Add User</span>
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -132,7 +133,7 @@ export default function UserManagement() {
             />
             <input
               type="text"
-              placeholder="Search users..."
+              placeholder="Search by name, username, or email..."
               className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -145,7 +146,7 @@ export default function UserManagement() {
           >
             <option value="">All MDAs</option>
             {mdas.map((mda) => (
-              <option key={mda._id} value={mda._id}>
+              <option key={mda._id} value={mda.name}>
                 {mda.name}
               </option>
             ))}
@@ -164,87 +165,23 @@ export default function UserManagement() {
         </div>
       </div>
 
-      {/* Users Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {filteredUsers.map((user) => (
-          <div
-            key={user._id}
-            className="bg-white rounded-lg shadow-sm border border-gray-200"
-          >
-            <div className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2">
-                    <User size={20} className="text-gray-500" />
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {user.name}
-                    </h3>
-                    <span className={getStatusBadge(user.isActive)}>
-                      {user.isActive ? "Active" : "Inactive"}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-500 mt-1">{user.email}</p>
-                  <p className="text-sm text-gray-600 mt-2">
-                    <span className="flex items-center">
-                      <Building2 size={16} className="text-gray-400 mr-2" />
-                      {user.mdaId?.name || "No MDA assigned"}
-                    </span>
-                  </p>
-                </div>
-                <div className="flex items-center space-x-2">
-                 
-                  <button
-                    className="text-gray-500 hover:text-gray-700 p-1 rounded"
-                    onClick={() => handleUpdateUser(user)}
-                  >
-                    <Edit size={16} />
-                  </button>
-                  <button
-                    className="text-orange-500 hover:text-orange-700 p-1 rounded"
-                    onClick={() => handleResetPassword(user)}
-                    title="Reset Password"
-                  >
-                    <Shield size={16} />
-                  </button>
-                  <button
-                    className="text-red-500 hover:text-red-700 p-1 rounded"
-                    onClick={() => handleDeleteUser(user)}
-                    disabled={deleteUserMutation.isPending}
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <div className="flex items-center space-x-2">
-                    <Calendar size={14} />
-                    <span>
-                      Created: {new Date(user.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <span>Role: {user.role}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Empty State */}
-      {filteredUsers.length === 0 && (
-        <div className="text-center py-12">
-          <User className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-semibold text-gray-900">
-            No users found
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            {searchTerm || selectedMDA || selectedStatus
-              ? "Try adjusting your filters"
-              : "Get started by adding a new user"}
-          </p>
-        </div>
+      {/* Users Display */}
+      {currentLayout === 'card' ? (
+        <UserCardView
+          users={filteredUsers}
+          onUpdateUser={handleUpdateUser}
+          onDeleteUser={handleDeleteUser}
+          onResetPassword={handleResetPassword}
+          isDeleting={deleteUserMutation.isPending}
+        />
+      ) : (
+        <UserTableView
+          users={filteredUsers}
+          onUpdateUser={handleUpdateUser}
+          onDeleteUser={handleDeleteUser}
+          onResetPassword={handleResetPassword}
+          isDeleting={deleteUserMutation.isPending}
+        />
       )}
 
       {/* Pagination */}
