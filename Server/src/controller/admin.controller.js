@@ -422,6 +422,226 @@ export const resetAdminPassword = async (req, res) => {
   }
 };
 
+/**
+ * Export user data with MDA associations
+ * @route GET /api/admin/export/users
+ * @access Private (Admin only)
+ */
+export const exportUserData = async (req, res) => {
+  try {
+    const {
+      mdaId,
+      isActive,
+      startDate,
+      endDate,
+      format = 'json'
+    } = req.query;
+
+    // Validate format parameter
+    if (!['json', 'csv'].includes(format.toLowerCase())) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid format. Supported formats: json, csv'
+      });
+    }
+
+    // Validate date parameters
+    if (startDate && isNaN(Date.parse(startDate))) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid start date format. Use ISO date string.'
+      });
+    }
+
+    if (endDate && isNaN(Date.parse(endDate))) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid end date format. Use ISO date string.'
+      });
+    }
+
+    const filters = {
+      mdaId,
+      isActive: isActive !== undefined ? isActive === 'true' : undefined,
+      startDate,
+      endDate
+    };
+
+    const exportData = await adminService.exportUserData(filters, format);
+
+    // Set appropriate headers for file download
+    const contentType = format.toLowerCase() === 'csv' 
+      ? 'text/csv' 
+      : 'application/json';
+
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', `attachment; filename="${exportData.filename}"`);
+
+    if (format.toLowerCase() === 'csv') {
+      res.status(200).send(exportData.data);
+    } else {
+      res.status(200).json({
+        success: true,
+        message: 'User data exported successfully',
+        filename: exportData.filename,
+        data: exportData.data
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to export user data',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Export MDA data with user associations
+ * @route GET /api/admin/export/mdas
+ * @access Private (Admin only)
+ */
+export const exportMDAData = async (req, res) => {
+  try {
+    const {
+      isActive,
+      startDate,
+      endDate,
+      format = 'json'
+    } = req.query;
+
+    // Validate format parameter
+    if (!['json', 'csv'].includes(format.toLowerCase())) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid format. Supported formats: json, csv'
+      });
+    }
+
+    // Validate date parameters
+    if (startDate && isNaN(Date.parse(startDate))) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid start date format. Use ISO date string.'
+      });
+    }
+
+    if (endDate && isNaN(Date.parse(endDate))) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid end date format. Use ISO date string.'
+      });
+    }
+
+    const filters = {
+      isActive: isActive !== undefined ? isActive === 'true' : undefined,
+      startDate,
+      endDate
+    };
+
+    const exportData = await adminService.exportMDAData(filters, format);
+
+    // Set appropriate headers for file download
+    const contentType = format.toLowerCase() === 'csv' 
+      ? 'text/csv' 
+      : 'application/json';
+
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', `attachment; filename="${exportData.filename}"`);
+
+    if (format.toLowerCase() === 'csv') {
+      res.status(200).send(exportData.data);
+    } else {
+      res.status(200).json({
+        success: true,
+        message: 'MDA data exported successfully',
+        filename: exportData.filename,
+        data: exportData.data
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to export MDA data',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Export combined user and MDA data
+ * @route GET /api/admin/export/combined
+ * @access Private (Admin only)
+ */
+export const exportCombinedData = async (req, res) => {
+  try {
+    const {
+      mdaId,
+      isActive,
+      startDate,
+      endDate,
+      format = 'json'
+    } = req.query;
+
+    // Validate format parameter
+    if (!['json', 'csv'].includes(format.toLowerCase())) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid format. Supported formats: json, csv'
+      });
+    }
+
+    // Validate date parameters
+    if (startDate && isNaN(Date.parse(startDate))) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid start date format. Use ISO date string.'
+      });
+    }
+
+    if (endDate && isNaN(Date.parse(endDate))) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid end date format. Use ISO date string.'
+      });
+    }
+
+    const filters = {
+      mdaId,
+      isActive: isActive !== undefined ? isActive === 'true' : undefined,
+      startDate,
+      endDate
+    };
+
+    const exportData = await adminService.exportCombinedData(filters, format);
+
+    // Set appropriate headers for file download
+    const contentType = format.toLowerCase() === 'csv' 
+      ? 'text/csv' 
+      : 'application/json';
+
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', `attachment; filename="${exportData.filename}"`);
+
+    if (format.toLowerCase() === 'csv') {
+      res.status(200).send(exportData.data);
+    } else {
+      res.status(200).json({
+        success: true,
+        message: 'Combined data exported successfully',
+        filename: exportData.filename,
+        data: exportData.data
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to export combined data',
+      error: error.message
+    });
+  }
+};
+
 // Default export for backward compatibility
 export default {
   getAllAdmins,
@@ -429,5 +649,8 @@ export default {
   createAdmin,
   updateAdmin,
   deleteAdmin,
-  resetAdminPassword
+  resetAdminPassword,
+  exportUserData,
+  exportMDAData,
+  exportCombinedData
 };

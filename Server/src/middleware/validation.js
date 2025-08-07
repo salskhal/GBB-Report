@@ -56,10 +56,9 @@ export const validateUserCreation = [
   body('password')
     .isLength({ min: 6 })
     .withMessage('Password must be at least 6 characters'),
-  body('mdaReference')
-    .trim()
-    .isLength({ min: 1 })
-    .withMessage('MDA reference is required'),
+  body('mdaId')
+    .isMongoId()
+    .withMessage('MDA ID must be a valid MongoDB ObjectId'),
   handleValidationErrors
 ];
 

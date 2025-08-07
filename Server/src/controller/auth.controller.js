@@ -66,20 +66,22 @@ export const loginAdmin = async (req, res) => {
   try {
     const result = await authService.loginAdmin(email, password);
     
-    // Log successful admin login
-    await Activity.logActivity({
-      adminId: result.admin.id,
-      adminName: result.admin.name,
-      action: 'LOGIN',
-      resourceType: 'ADMIN',
-      details: {
-        email: result.admin.email,
-        role: result.admin.role,
-        loginTime: new Date()
-      },
-      ipAddress,
-      userAgent
-    });
+    // Only log login for regular admins, not superadmins
+    if (result.admin.role === 'admin') {
+      await Activity.logActivity({
+        adminId: result.admin.id,
+        adminName: result.admin.name,
+        action: 'LOGIN',
+        resourceType: 'ADMIN',
+        details: {
+          email: result.admin.email,
+          role: result.admin.role,
+          loginTime: new Date()
+        },
+        ipAddress,
+        userAgent
+      });
+    }
     
     res.status(200).json({ success: true, message: 'Admin login successful', data: result });
   } catch (error) {
@@ -143,8 +145,8 @@ export const logoutAdmin = async (req, res) => {
     // Extract admin info from the authenticated request (assuming middleware sets req.admin)
     const admin = req.admin;
     
-    if (admin) {
-      // Log admin logout
+    // Only log logout for regular admins, not superadmins
+    if (admin && admin.role === 'admin') {
       await Activity.logActivity({
         adminId: admin.id,
         adminName: admin.name,

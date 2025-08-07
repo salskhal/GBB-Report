@@ -53,10 +53,10 @@ export const createUser = async (req, res) => {
       data: user,
     });
   } catch (error) {
-    if (error.message === "Email already registered") {
+    if (error.message === "Username already registered") {
       return res.status(400).json({
         success: false,
-        message: "Email already registered",
+        message: "Username already registered",
       });
     }
 
@@ -104,10 +104,10 @@ export const updateUser = async (req, res) => {
       });
     }
 
-    if (error.message === "Email already registered") {
+    if (error.message === "Username already registered") {
       return res.status(400).json({
         success: false,
-        message: "Email already registered",
+        message: "Username already registered",
       });
     }
 

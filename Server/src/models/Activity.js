@@ -34,6 +34,7 @@ const activitySchema = new mongoose.Schema(
         // Resource ID is required for all actions except LOGIN/LOGOUT
         return !["LOGIN", "LOGOUT"].includes(this.action);
       },
+      default: null,
     },
     resourceName: {
       type: String,
@@ -42,6 +43,7 @@ const activitySchema = new mongoose.Schema(
         return !["LOGIN", "LOGOUT"].includes(this.action);
       },
       trim: true,
+      default: null,
     },
     details: {
       type: mongoose.Schema.Types.Mixed,
@@ -87,10 +89,11 @@ activitySchema.index({ adminId: 1, action: 1, resourceType: 1, timestamp: -1 });
 activitySchema.statics.logActivity = async function(activityData) {
   try {
     const activity = new this(activityData);
-    await activity.save();
-    return activity;
+    const savedActivity = await activity.save();
+    return savedActivity;
   } catch (error) {
     console.error("Failed to log activity:", error);
+    console.error("Activity data:", activityData);
     // Don't throw error to prevent activity logging from breaking main operations
     return null;
   }

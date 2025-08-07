@@ -24,6 +24,9 @@ import {
   updateAdmin,
   deleteAdmin,
   resetAdminPassword,
+  exportUserData,
+  exportMDAData,
+  exportCombinedData,
 } from "../controller/admin.controller.js";
 
 import {
@@ -131,6 +134,7 @@ router.put("/admins/:id", authorizeSuperAdmin, logActivity(), updateAdmin);
 // @access  Private (Super Admin only)
 router.delete("/admins/:id", authorizeSuperAdmin, logActivity(), deleteAdmin);
 
+
 // @desc    Reset admin password
 // @route   PUT /api/admin/admins/:id/reset-password
 // @access  Private (Super Admin only)
@@ -156,5 +160,21 @@ router.get("/activities/stats", authorizeSuperAdmin, getActivityStats);
 // @route   DELETE /api/admin/activities/cleanup
 // @access  Private (Super Admin only)
 router.delete("/activities/cleanup", authorizeSuperAdmin, cleanupOldLogs);
+
+// Data Export Routes (Admin only)
+// @desc    Export user data with MDA associations
+// @route   GET /api/admin/export/users
+// @access  Private (Admin only)
+router.get("/export/users", exportUserData);
+
+// @desc    Export MDA data with user associations
+// @route   GET /api/admin/export/mdas
+// @access  Private (Admin only)
+router.get("/export/mdas", exportMDAData);
+
+// @desc    Export combined user and MDA data
+// @route   GET /api/admin/export/combined
+// @access  Private (Admin only)
+router.get("/export/combined", exportCombinedData);
 
 export default router;

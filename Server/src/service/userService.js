@@ -39,9 +39,9 @@ export const createUser = async (userData) => {
     }
 
     // Check if email already exists
-    const existingUser = await User.findOne({ email: userData.email });
+    const existingUser = await User.findOne({ username: userData.username });
     if (existingUser) {
-      throw new Error('Email already registered');
+      throw new Error('Username already registered');
     }
 
     const user = new User(userData);
@@ -66,16 +66,27 @@ export const updateUser = async (userId, updateData) => {
       }
     }
 
-    // If updating email, check for duplicates
-    if (updateData.email) {
+    // If updating usernname, 
+    if (updateData.username) {
       const existingUser = await User.findOne({
-        email: updateData.email,
+        username: updateData.username,
         _id: { $ne: userId }
       });
       if (existingUser) {
-        throw new Error('Email already registered');
+        throw new Error('Username already registered');
       }
     }
+
+
+    // if (updateData.email) {
+    //   const existingUser = await User.findOne({
+    //     email: updateData.email,
+    //     _id: { $ne: userId }
+    //   });
+    //   if (existingUser) {
+    //     throw new Error('Email already registered');
+    //   }
+    // }
 
     const user = await User.findByIdAndUpdate(
       userId,

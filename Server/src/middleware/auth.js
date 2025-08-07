@@ -70,7 +70,7 @@ export const checkUserStatus = async (req, res, next) => {
       // Set req.admin for activity logging
       if (user) {
         req.admin = {
-          id: user._id,
+          id: user._id.toString(),
           name: user.name,
           email: user.email,
           role: user.role

@@ -187,25 +187,25 @@ export default function CreateUserModal({
           </div>
 
           <div>
-            <Label htmlFor="mdaReference">MDA</Label>
+            <Label htmlFor="mdaId">MDA</Label>
             <Select
               required
-              onValueChange={(value) => setValue("mdaReference", value)}
+              onValueChange={(value) => setValue("mdaId", value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select an MDA" />
               </SelectTrigger>
               <SelectContent>
                 {mdas.map((mda) => (
-                  <SelectItem key={mda._id} value={mda.name}>
+                  <SelectItem key={mda._id} value={mda._id}>
                     {mda.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            {errors.mdaReference && (
+            {errors.mdaId && (
               <p className="text-sm text-red-500 mt-1">
-                {errors.mdaReference.message}
+                {errors.mdaId.message}
               </p>
             )}
           </div>

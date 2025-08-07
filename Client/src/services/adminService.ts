@@ -7,8 +7,7 @@ export interface AdminUser {
   username: string;
   contactEmail: string;
   role: string;
-  mdaReference: string;
-  mda?: {
+  mdaId?: {
     _id: string;
     name: string;
     reports?: Array<{
@@ -28,14 +27,14 @@ export interface CreateUserRequest {
   username: string;
   contactEmail: string;
   password: string;
-  mdaReference: string;
+  mdaId: string;
 }
 
 export interface UpdateUserRequest {
   name?: string;
   username?: string;
   contactEmail?: string;
-  mdaReference?: string;
+  mdaId?: string;
   role?: string;
   isActive?: boolean;
 }
@@ -72,13 +71,20 @@ export interface UpdateMDARequest {
   isActive?: boolean;
 }
 
+
+export interface CreatedBy {
+  _id: string;
+  name: string;
+  email: string;
+}
+
 export interface Admin {
   _id: string;
   name: string;
   email: string;
   role: 'admin' | 'superadmin';
   canBeDeleted: boolean;
-  createdBy?: string;
+  createdBy?: CreatedBy;
   isActive: boolean;
   lastLogin?: string;
   createdAt: string;
@@ -217,7 +223,7 @@ export const adminService = {
     if (params?.search) queryParams.append('search', params.search);
 
     const response = await api.get(`/admin/activities?${queryParams.toString()}`);
-    return response.data;
+    return response.data.data; // Extract the data property from the response
   },
 
   exportActivities: async (params?: {
@@ -244,6 +250,68 @@ export const adminService = {
     if (params?.format) queryParams.append('format', params.format);
 
     const response = await api.get(`/admin/activities/export?${queryParams.toString()}`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  // Data Export Methods
+  exportUserData: async (params?: {
+    mdaId?: string;
+    isActive?: boolean;
+    startDate?: string;
+    endDate?: string;
+    format?: 'csv' | 'json';
+  }): Promise<Blob> => {
+    const queryParams = new URLSearchParams();
+    
+    if (params?.mdaId) queryParams.append('mdaId', params.mdaId);
+    if (params?.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
+    if (params?.startDate) queryParams.append('startDate', params.startDate);
+    if (params?.endDate) queryParams.append('endDate', params.endDate);
+    if (params?.format) queryParams.append('format', params.format);
+
+    const response = await api.get(`/admin/export/users?${queryParams.toString()}`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  exportMDAData: async (params?: {
+    isActive?: boolean;
+    startDate?: string;
+    endDate?: string;
+    format?: 'csv' | 'json';
+  }): Promise<Blob> => {
+    const queryParams = new URLSearchParams();
+    
+    if (params?.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
+    if (params?.startDate) queryParams.append('startDate', params.startDate);
+    if (params?.endDate) queryParams.append('endDate', params.endDate);
+    if (params?.format) queryParams.append('format', params.format);
+
+    const response = await api.get(`/admin/export/mdas?${queryParams.toString()}`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  exportCombinedData: async (params?: {
+    mdaId?: string;
+    isActive?: boolean;
+    startDate?: string;
+    endDate?: string;
+    format?: 'csv' | 'json';
+  }): Promise<Blob> => {
+    const queryParams = new URLSearchParams();
+    
+    if (params?.mdaId) queryParams.append('mdaId', params.mdaId);
+    if (params?.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
+    if (params?.startDate) queryParams.append('startDate', params.startDate);
+    if (params?.endDate) queryParams.append('endDate', params.endDate);
+    if (params?.format) queryParams.append('format', params.format);
+
+    const response = await api.get(`/admin/export/combined?${queryParams.toString()}`, {
       responseType: 'blob',
     });
     return response.data;

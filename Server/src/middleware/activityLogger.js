@@ -51,13 +51,24 @@ export const logActivity = (options = {}) => {
     const action = getActionFromMethod(req.method);
     const resourceType = getResourceTypeFromUrl(req.originalUrl);
     
+    console.log('Activity Logger Debug:', {
+      method: req.method,
+      url: req.originalUrl,
+      action,
+      resourceType,
+      hasAdmin: !!req.admin,
+      adminInfo: req.admin ? { id: req.admin.id, name: req.admin.name, role: req.admin.role } : null
+    });
+    
     // Skip logging if not a relevant operation
     if (!action || !resourceType) {
+      console.log('Activity Logger: Skipping - no action or resource type');
       return next();
     }
 
     // Skip logging if admin info is not available
     if (!req.admin) {
+      console.log('Activity Logger: No admin info available for', req.originalUrl);
       return next();
     }
 
@@ -70,8 +81,18 @@ export const logActivity = (options = {}) => {
 
     // Override res.send to capture response
     res.send = function(data) {
-      responseData = data;
+      try {
+        responseData = typeof data === 'string' ? JSON.parse(data) : data;
+      } catch (e) {
+        responseData = data;
+      }
       statusCode = res.statusCode;
+      
+      // Log activity immediately after capturing response data
+      setImmediate(async () => {
+        await logActivityData();
+      });
+      
       return originalSend.call(this, data);
     };
 
@@ -79,32 +100,40 @@ export const logActivity = (options = {}) => {
     res.json = function(data) {
       responseData = data;
       statusCode = res.statusCode;
+      
+      // Log activity immediately after capturing response data
+      setImmediate(async () => {
+        await logActivityData();
+      });
+      
       return originalJson.call(this, data);
     };
 
-    // Continue with the request
-    next();
-
-    // Log activity after response is sent (in next tick to avoid blocking)
-    process.nextTick(async () => {
+    // Function to log activity data
+    const logActivityData = async () => {
       try {
+        console.log('Activity Logger: Processing response', {
+          statusCode,
+          responseData: responseData ? (typeof responseData === 'object' ? JSON.stringify(responseData).substring(0, 200) : responseData) : null
+        });
+        
         // Only log successful operations (2xx status codes)
         if (statusCode >= 200 && statusCode < 300) {
           const resourceId = getResourceIdFromUrl(req.originalUrl) || 
-                           (responseData && typeof responseData === 'object' && responseData.data && responseData.data.id);
+                           (responseData && typeof responseData === 'object' && responseData.data && (responseData.data._id || responseData.data.id));
           
           let resourceName = null;
           let details = {};
 
           // Extract resource name and details from request/response
           if (action === 'CREATE' && responseData && responseData.data) {
-            resourceName = responseData.data.name || responseData.data.username || responseData.data.email;
+            resourceName = responseData.data.name || responseData.data.username || responseData.data.email || 'Unknown';
             details.created = responseData.data;
           } else if (action === 'UPDATE') {
-            resourceName = req.body.name || req.body.username || req.body.email;
+            resourceName = req.body.name || req.body.username || req.body.email || 'Unknown';
             details.updated = req.body;
           } else if (action === 'DELETE') {
-            resourceName = req.params.id; // Use ID as name for delete operations
+            resourceName = req.params.id || 'Unknown'; // Use ID as name for delete operations
             details.deleted = { id: req.params.id };
           }
 
@@ -113,8 +142,7 @@ export const logActivity = (options = {}) => {
           details.url = req.originalUrl;
           details.timestamp = new Date();
 
-          // Log the activity
-          await Activity.logActivity({
+          const activityData = {
             adminId: req.admin.id,
             adminName: req.admin.name,
             action,
@@ -124,13 +152,24 @@ export const logActivity = (options = {}) => {
             details,
             ipAddress: getClientIP(req),
             userAgent: getUserAgent(req)
-          });
+          };
+
+          console.log('Activity Logger: Attempting to log activity', activityData);
+
+          // Log the activity
+          const result = await Activity.logActivity(activityData);
+          console.log('Activity Logger: Log result', result ? 'SUCCESS' : 'FAILED');
+        } else {
+          console.log('Activity Logger: Skipping - non-success status code:', statusCode);
         }
       } catch (error) {
         // Log error but don't affect the main request
         console.error('Activity logging failed:', error);
       }
-    });
+    };
+
+    // Continue with the request
+    next();
   };
 };
 

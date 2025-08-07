@@ -33,7 +33,7 @@ export const loginUser = async (username, password) => {
     }
 
     // Find MDA by reference
-    const mda = await MDA.findOne({ name: user.mdaReference, isActive: true });
+    const mda = await MDA.findOne({ _id: user.mdaId, isActive: true });
     if (!mda) {
       throw new Error('MDA not found or inactive');
     }
@@ -47,8 +47,12 @@ export const loginUser = async (username, password) => {
       userId: user._id,
       username: user.username,
       role: user.role,
-      mdaReference: user.mdaReference
+      mdaId: user.mdaId
     });
+
+
+    // Filter active reports at the database level
+    const activeReports = mda.reports.filter(report => report.isActive);
 
     return {
       token,
@@ -59,12 +63,14 @@ export const loginUser = async (username, password) => {
         contactEmail: user.contactEmail,
         role: user.role,
         mda: {
+          id: mda._id,
           name: mda.name,
-          reports: mda.reports.filter(report => report.isActive)
+          reports: activeReports,
         }
       }
     };
   } catch (error) {
+    
     throw error;
   }
 };

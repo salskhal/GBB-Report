@@ -26,19 +26,26 @@ export const getActivityLogs = async (req, res) => {
       resourceType,
       startDate,
       endDate,
+      dateFrom,
+      dateTo,
+      search,
       page,
       limit
     } = req.query;
 
+    // Support both parameter formats for backward compatibility
+    const actualStartDate = startDate || dateFrom;
+    const actualEndDate = endDate || dateTo;
+
     // Validate date parameters
-    if (startDate && isNaN(Date.parse(startDate))) {
+    if (actualStartDate && isNaN(Date.parse(actualStartDate))) {
       return res.status(400).json({
         success: false,
         message: "Invalid start date format. Use ISO date string."
       });
     }
 
-    if (endDate && isNaN(Date.parse(endDate))) {
+    if (actualEndDate && isNaN(Date.parse(actualEndDate))) {
       return res.status(400).json({
         success: false,
         message: "Invalid end date format. Use ISO date string."
@@ -46,7 +53,7 @@ export const getActivityLogs = async (req, res) => {
     }
 
     // Validate date range
-    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+    if (actualStartDate && actualEndDate && new Date(actualStartDate) > new Date(actualEndDate)) {
       return res.status(400).json({
         success: false,
         message: "Start date cannot be after end date."
@@ -57,8 +64,9 @@ export const getActivityLogs = async (req, res) => {
       adminId,
       action,
       resourceType,
-      startDate,
-      endDate,
+      startDate: actualStartDate,
+      endDate: actualEndDate,
+      search,
       page,
       limit
     };
@@ -68,7 +76,13 @@ export const getActivityLogs = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Activity logs retrieved successfully",
-      data: result
+      data: {
+        activities: result.activities,
+        totalCount: result.pagination.totalCount,
+        currentPage: result.pagination.currentPage,
+        totalPages: result.pagination.totalPages,
+        pagination: result.pagination
+      }
     });
   } catch (error) {
     console.error("ActivityController: Error retrieving activity logs:", error);
@@ -101,8 +115,15 @@ export const exportActivityLogs = async (req, res) => {
       resourceType,
       startDate,
       endDate,
+      dateFrom,
+      dateTo,
+      search,
       format = 'json'
     } = req.query;
+
+    // Support both parameter formats for backward compatibility
+    const actualStartDate = startDate || dateFrom;
+    const actualEndDate = endDate || dateTo;
 
     // Validate format parameter
     if (!['json', 'csv'].includes(format.toLowerCase())) {
@@ -113,14 +134,14 @@ export const exportActivityLogs = async (req, res) => {
     }
 
     // Validate date parameters
-    if (startDate && isNaN(Date.parse(startDate))) {
+    if (actualStartDate && isNaN(Date.parse(actualStartDate))) {
       return res.status(400).json({
         success: false,
         message: "Invalid start date format. Use ISO date string."
       });
     }
 
-    if (endDate && isNaN(Date.parse(endDate))) {
+    if (actualEndDate && isNaN(Date.parse(actualEndDate))) {
       return res.status(400).json({
         success: false,
         message: "Invalid end date format. Use ISO date string."
@@ -131,8 +152,9 @@ export const exportActivityLogs = async (req, res) => {
       adminId,
       action,
       resourceType,
-      startDate,
-      endDate
+      startDate: actualStartDate,
+      endDate: actualEndDate,
+      search
     };
 
     const exportData = await activityService.exportActivityLogs(filters, format);
@@ -181,24 +203,28 @@ export const exportActivityLogs = async (req, res) => {
  */
 export const getActivityStats = async (req, res) => {
   try {
-    const { startDate, endDate } = req.query;
+    const { startDate, endDate, dateFrom, dateTo } = req.query;
+    
+    // Support both parameter formats for backward compatibility
+    const actualStartDate = startDate || dateFrom;
+    const actualEndDate = endDate || dateTo;
 
     // Validate date parameters
-    if (startDate && isNaN(Date.parse(startDate))) {
+    if (actualStartDate && isNaN(Date.parse(actualStartDate))) {
       return res.status(400).json({
         success: false,
         message: "Invalid start date format. Use ISO date string."
       });
     }
 
-    if (endDate && isNaN(Date.parse(endDate))) {
+    if (actualEndDate && isNaN(Date.parse(actualEndDate))) {
       return res.status(400).json({
         success: false,
         message: "Invalid end date format. Use ISO date string."
       });
     }
 
-    const filters = { startDate, endDate };
+    const filters = { startDate: actualStartDate, endDate: actualEndDate };
     const stats = await activityService.getActivityStats(filters);
 
     res.status(200).json({

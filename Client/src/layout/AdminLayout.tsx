@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { Menu, ChevronDown, User, LogOut, Home, Users, Building2, Shield, Activity } from "lucide-react";
+import { Menu, ChevronDown, User, LogOut, Home, Users, Building2, Shield, Activity, Download } from "lucide-react";
 import { galaxyWhite } from "@/assets";
 import { useAuthStore } from "@/store/authStore";
 
@@ -48,6 +48,13 @@ export default function AdminDashboardLayout({
       icon: <Building2 size={20} />,
     },
   ];
+
+  // Add data export for all admins
+  navItems.push({
+    path: "/admin/dashboard/export",
+    label: "Data Export",
+    icon: <Download size={20} />,
+  });
 
   // Add admin management for super admins only
   if (admin?.role === 'superadmin') {
@@ -99,6 +106,8 @@ export default function AdminDashboardLayout({
         return "Admin Management";
       case "activities":
         return "Activity Log";
+      case "export":
+        return "Data Export";
       default:
         return "Admin Dashboard";
     }

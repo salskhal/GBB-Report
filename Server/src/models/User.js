@@ -43,11 +43,6 @@ const userSchema = new mongoose.Schema(
       enum: ["user"],
       default: "user",
     },
-    mdaReference: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "MDA",
-      required: [true, "MDA reference is required"],
-    },
     mdaId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "MDA",

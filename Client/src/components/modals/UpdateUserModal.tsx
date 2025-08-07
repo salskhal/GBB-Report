@@ -41,7 +41,7 @@ export default function UpdateUserModal({ isOpen, onClose, user }: UpdateUserMod
       setValue('name', user.name);
       setValue('username', user.username);
       setValue('contactEmail', user.contactEmail);
-      setValue('mdaReference', user.mdaReference);
+      setValue('mdaId', user.mdaId?._id || '');
       setValue('isActive', user.isActive);
     }
   }, [isOpen, user, reset, setValue]);
@@ -175,20 +175,20 @@ export default function UpdateUserModal({ isOpen, onClose, user }: UpdateUserMod
 
           <div>
             <Label htmlFor="mdaReference">MDA</Label>
-            <Select onValueChange={(value) => setValue('mdaReference', value)} defaultValue={user.mdaReference}>
+            <Select onValueChange={(value) => setValue('mdaId', value)} defaultValue={user.mdaId?.name}>
               <SelectTrigger>
                 <SelectValue placeholder="Select an MDA" />
               </SelectTrigger>
               <SelectContent>
                 {mdas.map((mda) => (
-                  <SelectItem key={mda._id} value={mda.name}>
+                  <SelectItem key={mda._id} value={mda._id}>
                     {mda.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            {errors.mdaReference && (
-              <p className="text-sm text-red-500 mt-1">{errors.mdaReference.message}</p>
+            {errors.mdaId&& (
+              <p className="text-sm text-red-500 mt-1">{errors.mdaId.message}</p>
             )}
           </div>
 

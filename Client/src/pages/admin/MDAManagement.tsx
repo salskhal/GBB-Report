@@ -1,16 +1,14 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, Plus, Edit, Trash2, Building2 } from 'lucide-react';
 import { useMDAs, useDeleteMDA } from '@/hooks/useMDAs';
-import CreateMDAModal from '@/components/modals/CreateMDAModal';
-import UpdateMDAModal from '@/components/modals/UpdateMDAModal';
 import DeleteConfirmationModal from '@/components/modals/DeleteConfirmationModal';
 import type { MDA } from '@/services/adminService';
 
 export default function MDAManagement() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedMDA, setSelectedMDA] = useState<MDA | null>(null);
 
@@ -19,8 +17,7 @@ export default function MDAManagement() {
   const deleteMDAMutation = useDeleteMDA();
 
   const handleUpdateMDA = (mda: MDA) => {
-    setSelectedMDA(mda);
-    setIsUpdateModalOpen(true);
+    navigate(`/admin/dashboard/mdas/update/${mda._id}`);
   };
 
   const handleDeleteMDA = (mda: MDA) => {
@@ -86,7 +83,7 @@ export default function MDAManagement() {
           <p className="text-gray-600 mt-2">Manage Ministries, Departments, and Agencies</p>
         </div>
         <button 
-          onClick={() => setIsCreateModalOpen(true)}
+          onClick={() => navigate('/admin/dashboard/mdas/create')}
           className="mt-4 sm:mt-0 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
         >
           <Plus size={16} />
@@ -266,19 +263,6 @@ export default function MDAManagement() {
           </button>
         </div>
       </div>
-
-      {/* Create MDA Modal */}
-      <CreateMDAModal 
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-      />
-
-      {/* Update MDA Modal */}
-      <UpdateMDAModal 
-        isOpen={isUpdateModalOpen}
-        onClose={() => setIsUpdateModalOpen(false)}
-        mda={selectedMDA}
-      />
 
       {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal

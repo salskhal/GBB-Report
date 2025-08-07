@@ -1,5 +1,7 @@
 import Admin from '../models/Admin.js';
 import Activity from '../models/Activity.js';
+import User from '../models/User.js';
+import MDA from '../models/MDA.js';
 import mongoose from 'mongoose';
 
 /**
@@ -397,6 +399,276 @@ export const validateAdminPermissions = (admin, operation) => {
   return true; // Regular admin operations
 };
 
+/**
+ * Export user data with MDA associations
+ * @param {Object} filters - Export filters
+ * @param {string} format - Export format ('json' or 'csv')
+ * @returns {Object} Export data with filename
+ */
+export const exportUserData = async (filters = {}, format = 'json') => {
+  try {
+    // Build query based on filters
+    const query = {};
+    
+    if (filters.mdaId) {
+      query.mdaId = filters.mdaId;
+    }
+    
+    if (filters.isActive !== undefined) {
+      query.isActive = filters.isActive;
+    }
+    
+    if (filters.startDate || filters.endDate) {
+      query.createdAt = {};
+      if (filters.startDate) {
+        query.createdAt.$gte = new Date(filters.startDate);
+      }
+      if (filters.endDate) {
+        query.createdAt.$lte = new Date(filters.endDate);
+      }
+    }
+
+    // Get users with MDA associations
+    const users = await User.find(query)
+      .populate('mdaId', 'name reports isActive createdAt updatedAt')
+      .select('-password')
+      .sort({ createdAt: -1 });
+
+    // Transform data for export
+    const exportData = users.map(user => ({
+      userId: user._id,
+      username: user.username,
+      name: user.name,
+      contactEmail: user.contactEmail,
+      role: user.role,
+      isActive: user.isActive,
+      lastLogin: user.lastLogin,
+      userCreatedAt: user.createdAt,
+      userUpdatedAt: user.updatedAt,
+      mdaId: user.mdaId?._id,
+      mdaName: user.mdaId?.name,
+      mdaIsActive: user.mdaId?.isActive,
+      mdaCreatedAt: user.mdaId?.createdAt,
+      mdaUpdatedAt: user.mdaId?.updatedAt,
+      mdaReportsCount: user.mdaId?.reports?.length || 0,
+      mdaActiveReportsCount: user.mdaId?.reports?.filter(r => r.isActive).length || 0,
+      mdaReports: user.mdaId?.reports?.map(r => ({
+        title: r.title,
+        url: r.url,
+        isActive: r.isActive
+      })) || []
+    }));
+
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `user-data-export-${timestamp}.${format}`;
+
+    if (format.toLowerCase() === 'csv') {
+      // Convert to CSV
+      const csvHeaders = [
+        'User ID', 'Username', 'Name', 'Contact Email', 'Role', 'Is Active', 
+        'Last Login', 'User Created', 'User Updated', 'MDA ID', 'MDA Name', 
+        'MDA Active', 'MDA Created', 'MDA Updated', 'Reports Count', 
+        'Active Reports Count', 'Reports'
+      ];
+
+      const csvRows = exportData.map(user => [
+        user.userId,
+        user.username,
+        user.name,
+        user.contactEmail,
+        user.role,
+        user.isActive,
+        user.lastLogin || '',
+        user.userCreatedAt,
+        user.userUpdatedAt,
+        user.mdaId || '',
+        user.mdaName || '',
+        user.mdaIsActive || '',
+        user.mdaCreatedAt || '',
+        user.mdaUpdatedAt || '',
+        user.mdaReportsCount,
+        user.mdaActiveReportsCount,
+        JSON.stringify(user.mdaReports)
+      ]);
+
+      const csvContent = [
+        csvHeaders.join(','),
+        ...csvRows.map(row => row.map(field => 
+          typeof field === 'string' && field.includes(',') 
+            ? `"${field.replace(/"/g, '""')}"` 
+            : field
+        ).join(','))
+      ].join('\n');
+
+      return { data: csvContent, filename };
+    }
+
+    return { data: exportData, filename };
+  } catch (error) {
+    throw new Error(`Failed to export user data: ${error.message}`);
+  }
+};
+
+/**
+ * Export MDA data with user associations
+ * @param {Object} filters - Export filters
+ * @param {string} format - Export format ('json' or 'csv')
+ * @returns {Object} Export data with filename
+ */
+export const exportMDAData = async (filters = {}, format = 'json') => {
+  try {
+    // Build query based on filters
+    const query = {};
+    
+    if (filters.isActive !== undefined) {
+      query.isActive = filters.isActive;
+    }
+    
+    if (filters.startDate || filters.endDate) {
+      query.createdAt = {};
+      if (filters.startDate) {
+        query.createdAt.$gte = new Date(filters.startDate);
+      }
+      if (filters.endDate) {
+        query.createdAt.$lte = new Date(filters.endDate);
+      }
+    }
+
+    // Get MDAs
+    const mdas = await MDA.find(query).sort({ createdAt: -1 });
+
+    // Get user counts for each MDA
+    const exportData = await Promise.all(mdas.map(async (mda) => {
+      const users = await User.find({ mdaId: mda._id })
+        .select('_id username name contactEmail isActive lastLogin createdAt')
+        .sort({ createdAt: -1 });
+
+      const activeUsers = users.filter(user => user.isActive);
+      const inactiveUsers = users.filter(user => !user.isActive);
+
+      return {
+        mdaId: mda._id,
+        mdaName: mda.name,
+        mdaIsActive: mda.isActive,
+        mdaCreatedAt: mda.createdAt,
+        mdaUpdatedAt: mda.updatedAt,
+        reportsCount: mda.reports.length,
+        activeReportsCount: mda.reports.filter(r => r.isActive).length,
+        inactiveReportsCount: mda.reports.filter(r => !r.isActive).length,
+        reports: mda.reports.map(r => ({
+          title: r.title,
+          url: r.url,
+          isActive: r.isActive
+        })),
+        totalUsersCount: users.length,
+        activeUsersCount: activeUsers.length,
+        inactiveUsersCount: inactiveUsers.length,
+        users: users.map(user => ({
+          userId: user._id,
+          username: user.username,
+          name: user.name,
+          contactEmail: user.contactEmail,
+          isActive: user.isActive,
+          lastLogin: user.lastLogin,
+          createdAt: user.createdAt
+        }))
+      };
+    }));
+
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `mda-data-export-${timestamp}.${format}`;
+
+    if (format.toLowerCase() === 'csv') {
+      // Convert to CSV
+      const csvHeaders = [
+        'MDA ID', 'MDA Name', 'MDA Active', 'MDA Created', 'MDA Updated',
+        'Reports Count', 'Active Reports', 'Inactive Reports', 'Reports',
+        'Total Users', 'Active Users', 'Inactive Users', 'Users'
+      ];
+
+      const csvRows = exportData.map(mda => [
+        mda.mdaId,
+        mda.mdaName,
+        mda.mdaIsActive,
+        mda.mdaCreatedAt,
+        mda.mdaUpdatedAt,
+        mda.reportsCount,
+        mda.activeReportsCount,
+        mda.inactiveReportsCount,
+        JSON.stringify(mda.reports),
+        mda.totalUsersCount,
+        mda.activeUsersCount,
+        mda.inactiveUsersCount,
+        JSON.stringify(mda.users)
+      ]);
+
+      const csvContent = [
+        csvHeaders.join(','),
+        ...csvRows.map(row => row.map(field => 
+          typeof field === 'string' && field.includes(',') 
+            ? `"${field.replace(/"/g, '""')}"` 
+            : field
+        ).join(','))
+      ].join('\n');
+
+      return { data: csvContent, filename };
+    }
+
+    return { data: exportData, filename };
+  } catch (error) {
+    throw new Error(`Failed to export MDA data: ${error.message}`);
+  }
+};
+
+/**
+ * Export combined user and MDA data
+ * @param {Object} filters - Export filters
+ * @param {string} format - Export format ('json' or 'csv')
+ * @returns {Object} Export data with filename
+ */
+export const exportCombinedData = async (filters = {}, format = 'json') => {
+  try {
+    const [userData, mdaData] = await Promise.all([
+      exportUserData(filters, 'json'),
+      exportMDAData(filters, 'json')
+    ]);
+
+    const combinedData = {
+      exportInfo: {
+        timestamp: new Date().toISOString(),
+        filters: filters,
+        totalUsers: userData.data.length,
+        totalMDAs: mdaData.data.length
+      },
+      users: userData.data,
+      mdas: mdaData.data
+    };
+
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `combined-data-export-${timestamp}.${format}`;
+
+    if (format.toLowerCase() === 'csv') {
+      // For CSV, create separate sections
+      const userCsv = await exportUserData(filters, 'csv');
+      const mdaCsv = await exportMDAData(filters, 'csv');
+      
+      const csvContent = [
+        '=== USER DATA ===',
+        userCsv.data,
+        '',
+        '=== MDA DATA ===',
+        mdaCsv.data
+      ].join('\n');
+
+      return { data: csvContent, filename };
+    }
+
+    return { data: combinedData, filename };
+  } catch (error) {
+    throw new Error(`Failed to export combined data: ${error.message}`);
+  }
+};
+
 // Default export for backward compatibility
 export default {
   getAllAdmins,
@@ -405,5 +677,8 @@ export default {
   updateAdmin,
   deleteAdmin,
   resetAdminPassword,
-  validateAdminPermissions
+  validateAdminPermissions,
+  exportUserData,
+  exportMDAData,
+  exportCombinedData
 };

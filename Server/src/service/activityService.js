@@ -50,6 +50,7 @@ class ActivityService {
         resourceType,
         startDate,
         endDate,
+        search,
         page = 1,
         limit = 50
       } = filters;
@@ -100,21 +101,63 @@ class ActivityService {
         }
       }
 
-      // Execute query with pagination
-      const [activities, totalCount] = await Promise.all([
-        Activity.find(query)
-          .populate("adminId", "name email role")
-          .sort({ timestamp: -1 })
-          .skip(skip)
-          .limit(limitNum)
-          .lean(),
-        Activity.countDocuments(query)
-      ]);
+      // Search functionality - search across admin name, resource name, and action
+      if (search) {
+        const searchRegex = new RegExp(search, 'i'); // Case-insensitive search
+        query.$or = [
+          { adminName: searchRegex },
+          { resourceName: searchRegex },
+          { action: searchRegex },
+          { resourceType: searchRegex }
+        ];
+      }
+
+      // Use aggregation pipeline to filter out superadmin activities
+      const pipeline = [
+        { $match: query },
+        {
+          $lookup: {
+            from: 'admins',
+            localField: 'adminId',
+            foreignField: '_id',
+            as: 'adminData'
+          }
+        },
+        {
+          $match: {
+            $or: [
+              { 'adminData.role': { $ne: 'superadmin' } },
+              { 'adminData': { $size: 0 } } // Include activities where admin no longer exists
+            ]
+          }
+        },
+        { $sort: { timestamp: -1 } },
+        {
+          $facet: {
+            activities: [
+              { $skip: skip },
+              { $limit: limitNum }
+            ],
+            totalCount: [
+              { $count: 'count' }
+            ]
+          }
+        }
+      ];
+
+      const [result] = await Activity.aggregate(pipeline);
+      const activities = result.activities || [];
+      const totalCount = result.totalCount[0]?.count || 0;
 
       // Calculate pagination metadata
       const totalPages = Math.ceil(totalCount / limitNum);
       const hasNextPage = pageNum < totalPages;
       const hasPrevPage = pageNum > 1;
+
+      // // Calculate pagination metadata
+      // const totalPages = Math.ceil(totalCount / limitNum);
+      // const hasNextPage = pageNum < totalPages;
+      // const hasPrevPage = pageNum > 1;
 
       return {
         activities,
@@ -185,31 +228,57 @@ class ActivityService {
         }
       }
 
-      // Aggregate statistics
+      // Base pipeline to exclude superadmin activities
+      const basePipeline = [
+        { $match: query },
+        {
+          $lookup: {
+            from: 'admins',
+            localField: 'adminId',
+            foreignField: '_id',
+            as: 'adminData'
+          }
+        },
+        {
+          $match: {
+            $or: [
+              { 'adminData.role': { $ne: 'superadmin' } },
+              { 'adminData': { $size: 0 } } // Include activities where admin no longer exists
+            ]
+          }
+        }
+      ];
+
+      // Aggregate statistics (excluding superadmin activities)
       const [
-        totalActivities,
+        totalActivitiesResult,
         actionStats,
         resourceStats,
         adminStats
       ] = await Promise.all([
-        Activity.countDocuments(query),
         Activity.aggregate([
-          { $match: query },
+          ...basePipeline,
+          { $count: 'total' }
+        ]),
+        Activity.aggregate([
+          ...basePipeline,
           { $group: { _id: "$action", count: { $sum: 1 } } },
           { $sort: { count: -1 } }
         ]),
         Activity.aggregate([
-          { $match: query },
+          ...basePipeline,
           { $group: { _id: "$resourceType", count: { $sum: 1 } } },
           { $sort: { count: -1 } }
         ]),
         Activity.aggregate([
-          { $match: query },
+          ...basePipeline,
           { $group: { _id: { adminId: "$adminId", adminName: "$adminName" }, count: { $sum: 1 } } },
           { $sort: { count: -1 } },
           { $limit: 10 }
         ])
       ]);
+
+      const totalActivities = totalActivitiesResult[0]?.total || 0;
 
       return {
         totalActivities,

@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import { Search, Plus, Edit, Trash2, Shield, Crown, User } from 'lucide-react';
-import { useAuthStore } from '@/store/authStore';
-import CreateAdminModal from '@/components/modals/CreateAdminModal';
-import UpdateAdminModal from '@/components/modals/UpdateAdminModal';
-import DeleteConfirmationModal from '@/components/modals/DeleteConfirmationModal';
-import { useAdmins, useDeleteAdmin } from '@/hooks/useAdmins';
-import type { Admin } from '@/services/adminService';
+import { useState } from "react";
+import { Search, Plus, Edit, Trash2, Shield, Crown, User } from "lucide-react";
+import { useAuthStore } from "@/store/authStore";
+import CreateAdminModal from "@/components/modals/CreateAdminModal";
+import UpdateAdminModal from "@/components/modals/UpdateAdminModal";
+import DeleteConfirmationModal from "@/components/modals/DeleteConfirmationModal";
+import { useAdmins, useDeleteAdmin } from "@/hooks/useAdmins";
+import type { Admin } from "@/services/adminService";
 
 export default function AdminManagement() {
   const { admin } = useAuthStore();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRole, setSelectedRole] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -25,8 +25,10 @@ export default function AdminManagement() {
   } = useAdmins();
   const deleteAdminMutation = useDeleteAdmin();
 
+  console.log("Admins data:", admins);
+
   // Check if current user is super admin
-  const isSuperAdmin = admin?.role === 'superadmin';
+  const isSuperAdmin = admin?.role === "superadmin";
 
   // Redirect if not super admin
   if (!isSuperAdmin) {
@@ -53,14 +55,15 @@ export default function AdminManagement() {
   };
 
   const getRoleBadge = (role: string) => {
-    const baseClasses = "px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1";
-    return role === 'superadmin'
+    const baseClasses =
+      "px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1";
+    return role === "superadmin"
       ? `${baseClasses} bg-purple-100 text-purple-800`
       : `${baseClasses} bg-blue-100 text-blue-800`;
   };
 
   const getRoleIcon = (role: string) => {
-    return role === 'superadmin' ? <Crown size={12} /> : <Shield size={12} />;
+    return role === "superadmin" ? <Crown size={12} /> : <Shield size={12} />;
   };
 
   const handleUpdateAdmin = (adminToUpdate: Admin) => {
@@ -81,7 +84,7 @@ export default function AdminManagement() {
       setIsDeleteModalOpen(false);
       setSelectedAdmin(null);
     } catch (error) {
-      console.error('Failed to delete admin:', error);
+      console.error("Failed to delete admin:", error);
     }
   };
 
@@ -89,19 +92,19 @@ export default function AdminManagement() {
     const matchesSearch =
       adminItem.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       adminItem.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = selectedRole === '' || adminItem.role === selectedRole;
+    const matchesRole = selectedRole === "" || adminItem.role === selectedRole;
     const matchesStatus =
-      selectedStatus === '' ||
-      (selectedStatus === 'Active' && adminItem.isActive) ||
-      (selectedStatus === 'Inactive' && !adminItem.isActive);
+      selectedStatus === "" ||
+      (selectedStatus === "Active" && adminItem.isActive) ||
+      (selectedStatus === "Inactive" && !adminItem.isActive);
 
     return matchesSearch && matchesRole && matchesStatus;
   });
 
   const totalAdmins = admins.length;
-  const activeAdmins = admins.filter(a => a.isActive).length;
-  const superAdmins = admins.filter(a => a.role === 'superadmin').length;
-  const regularAdmins = admins.filter(a => a.role === 'admin').length;
+  const activeAdmins = admins.filter((a) => a.isActive).length;
+  const superAdmins = admins.filter((a) => a.role === "superadmin").length;
+  const regularAdmins = admins.filter((a) => a.role === "admin").length;
 
   if (adminsLoading) {
     return (
@@ -178,8 +181,12 @@ export default function AdminManagement() {
         <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Regular Admins</p>
-              <p className="text-2xl font-bold text-gray-900">{regularAdmins}</p>
+              <p className="text-sm font-medium text-gray-600">
+                Regular Admins
+              </p>
+              <p className="text-2xl font-bold text-gray-900">
+                {regularAdmins}
+              </p>
             </div>
             <div className="p-3 rounded-full bg-indigo-500">
               <Shield size={24} className="text-white" />
@@ -292,7 +299,7 @@ export default function AdminManagement() {
                     </span>
                     {adminItem.createdBy && (
                       <span>
-                        Created by: {adminItem.createdBy}
+                        Created by: {adminItem.createdBy.name}
                       </span>
                     )}
                   </div>
@@ -302,6 +309,7 @@ export default function AdminManagement() {
                 </div>
               </div>
             </div>
+          
           </div>
         ))}
       </div>
@@ -315,8 +323,8 @@ export default function AdminManagement() {
           </h3>
           <p className="mt-1 text-sm text-gray-500">
             {searchTerm || selectedRole || selectedStatus
-              ? 'Try adjusting your filters'
-              : 'Get started by adding a new admin'}
+              ? "Try adjusting your filters"
+              : "Get started by adding a new admin"}
           </p>
         </div>
       )}

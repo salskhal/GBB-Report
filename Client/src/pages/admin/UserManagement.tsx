@@ -77,7 +77,7 @@ export default function UserManagement() {
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.contactEmail.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesMDA = selectedMDA === "" || user.mdaReference === selectedMDA;
+    const matchesMDA = selectedMDA === "" || user.mdaId?._id === selectedMDA;
     const matchesStatus =
       selectedStatus === "" ||
       (selectedStatus === "Active" && user.isActive) ||
@@ -197,7 +197,8 @@ export default function UserManagement() {
                   <p className="text-sm text-gray-600 mt-2">
                     <span className="flex items-center">
                       <Building2 size={16} className="text-gray-400 mr-2" />
-                      {user.mdaReference || "No MDA assigned"}
+                      {user.mdaId?.name || "No MDA assigned"}
+                      
                     </span>
                   </p>
                 </div>
