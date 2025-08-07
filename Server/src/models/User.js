@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema(
     contactEmail: {
       type: String,
       required: [true, "Contact email is required"],
+      unique: true,
       lowercase: true,
       trim: true,
       match: [
@@ -64,9 +65,9 @@ const userSchema = new mongoose.Schema(
 // Index for faster queries
 userSchema.index({ username: 1 }); // Unique index for username-based login
 userSchema.index({ contactEmail: 1 }); // Index for email searches
-userSchema.index({ mdaReference: 1 }); // Index for MDA-based queries
+userSchema.index({ mdaId: 1 }); // Index for MDA-based queries
 userSchema.index({ isActive: 1 });
-userSchema.index({ username: 1, mdaReference: 1 }); // Compound index for authentication
+userSchema.index({ username: 1, mdaId: 1 }); // Compound index for authentication
 
 // Hash password before saving
 userSchema.pre("save", async function (next) {

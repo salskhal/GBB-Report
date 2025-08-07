@@ -60,10 +60,29 @@ export const createUser = async (req, res) => {
       });
     }
 
+    if (error.message === "Email already registered") {
+      return res.status(400).json({
+        success: false,
+        message: "Email already registered",
+      });
+    }
+
     if (error.message === "MDA not found") {
       return res.status(400).json({
         success: false,
         message: "MDA not found",
+      });
+    }
+
+    // Handle MongoDB duplicate key errors
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern)[0];
+      const message = field === 'username' ? 'Username already registered' : 
+                     field === 'contactEmail' ? 'Email already registered' : 
+                     'Duplicate value detected';
+      return res.status(400).json({
+        success: false,
+        message: message,
       });
     }
 
@@ -77,6 +96,7 @@ export const createUser = async (req, res) => {
       });
     }
 
+    console.error('User creation error:', error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -111,10 +131,29 @@ export const updateUser = async (req, res) => {
       });
     }
 
+    if (error.message === "Email already registered") {
+      return res.status(400).json({
+        success: false,
+        message: "Email already registered",
+      });
+    }
+
     if (error.message === "MDA not found") {
       return res.status(400).json({
         success: false,
         message: "MDA not found",
+      });
+    }
+
+    // Handle MongoDB duplicate key errors
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern)[0];
+      const message = field === 'username' ? 'Username already registered' : 
+                     field === 'contactEmail' ? 'Email already registered' : 
+                     'Duplicate value detected';
+      return res.status(400).json({
+        success: false,
+        message: message,
       });
     }
 
@@ -128,6 +167,7 @@ export const updateUser = async (req, res) => {
       });
     }
 
+    console.error('User update error:', error);
     res.status(500).json({
       success: false,
       message: "Server error",
