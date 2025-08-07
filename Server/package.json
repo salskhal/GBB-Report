@@ -9,7 +9,8 @@
     "dev": "nodemon src/app.js",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "seed": "node src/seed/seed.js",
-    "seed:superadmin": "node src/seed/seedSuperAdmin.js"
+    "seed:superadmin": "node src/seed/seedSuperAdmin.js",
+    "fix-email-constraint": "node src/scripts/fix-user-email-constraint.js"
   },
   "keywords": [],
   "author": "",

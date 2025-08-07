@@ -38,10 +38,16 @@ export const createUser = async (userData) => {
       throw new Error('MDA not found');
     }
 
-    // Check if email already exists
-    const existingUser = await User.findOne({ username: userData.username });
-    if (existingUser) {
+    // Check if username already exists
+    const existingUserByUsername = await User.findOne({ username: userData.username });
+    if (existingUserByUsername) {
       throw new Error('Username already registered');
+    }
+
+    // Check if email already exists
+    const existingUserByEmail = await User.findOne({ contactEmail: userData.contactEmail });
+    if (existingUserByEmail) {
+      throw new Error('Email already registered');
     }
 
     const user = new User(userData);
@@ -66,7 +72,7 @@ export const updateUser = async (userId, updateData) => {
       }
     }
 
-    // If updating usernname, 
+    // If updating username, check for duplicates
     if (updateData.username) {
       const existingUser = await User.findOne({
         username: updateData.username,
@@ -77,16 +83,16 @@ export const updateUser = async (userId, updateData) => {
       }
     }
 
-
-    // if (updateData.email) {
-    //   const existingUser = await User.findOne({
-    //     email: updateData.email,
-    //     _id: { $ne: userId }
-    //   });
-    //   if (existingUser) {
-    //     throw new Error('Email already registered');
-    //   }
-    // }
+    // If updating email, check for duplicates
+    if (updateData.contactEmail) {
+      const existingUser = await User.findOne({
+        contactEmail: updateData.contactEmail,
+        _id: { $ne: userId }
+      });
+      if (existingUser) {
+        throw new Error('Email already registered');
+      }
+    }
 
     const user = await User.findByIdAndUpdate(
       userId,
