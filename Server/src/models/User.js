@@ -62,11 +62,9 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Index for faster queries
-userSchema.index({ username: 1 }); // Unique index for username-based login
-userSchema.index({ contactEmail: 1 }); // Index for email searches
+// Additional indexes for faster queries (unique indexes are already defined in schema)
 userSchema.index({ mdaId: 1 }); // Index for MDA-based queries
-userSchema.index({ isActive: 1 });
+userSchema.index({ isActive: 1 }); // Index for active status queries
 userSchema.index({ username: 1, mdaId: 1 }); // Compound index for authentication
 
 // Hash password before saving
