@@ -10,7 +10,10 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "seed": "node src/seed/seed.js",
     "seed:superadmin": "node src/seed/seedSuperAdmin.js",
-    "fix-email-constraint": "node src/scripts/fix-user-email-constraint.js"
+    "fix-email-constraint": "node src/scripts/fix-user-email-constraint.js",
+    "diagnose-users": "node src/scripts/diagnose-user-issues.js",
+    "clean-users": "node src/scripts/clean-and-fix-users.js",
+    "fix-duplicates": "node src/scripts/fix-duplicates-only.js"
   },
   "keywords": [],
   "author": "",
