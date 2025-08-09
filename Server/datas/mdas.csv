@@ -1,0 +1,136 @@
+Site Name,URL
+NHIS Wuse 2,https://mrtg.galaxybackbone.com.ng:8081/10.0.34.17_gigabitethernet0_0_0.html
+NHIS UTako,https://mrtg.galaxybackbone.com.ng:8081/10.0.36.9_gigabitethernet0_0_0.html
+BPP,https://mrtg.galaxybackbone.com.ng:8081/10.0.37.73_gigabitethernet0_0_0.html
+DMO HQ,https://mrtg.galaxybackbone.com.ng:8081/10.0.38.201_gigabitethernet0_0_1.html
+Tawada,https://mrtg.galaxybackbone.com.ng:8081/10.0.42.241_gigabitethernet0_0_0.html
+Nemsa,https://mrtg.galaxybackbone.com.ng:8081/10.0.43.249_gigabitethernet0_0_0.html
+NBET,https://mrtg.galaxybackbone.com.ng:8081/10.0.44.137_gigabitethernet0_0_1.html
+Huawei Asokoro Apt,https://mrtg.galaxybackbone.com.ng:8081/10.0.44.73_gigabitethernet0_0_0.html
+NIMC,https://mrtg.galaxybackbone.com.ng:8081/10.0.35.137_gigabitethernet0_0_1.html
+NUC,https://mrtg.galaxybackbone.com.ng:8081/10.0.34.1_gigabitethernet0_0_0.html
+TEFUND,https://mrtg.galaxybackbone.com.ng:8081/10.0.34.73_gigabitethernet0_0_0.html
+NERC,https://mrtg.galaxybackbone.com.ng:8081/10.0.43.185_gigabitethernet0_0_0.html
+ONSA Z4,https://mrtg.galaxybackbone.com.ng:8081/10.0.35.65_gigabitethernet0_0_0.html
+PTDF,https://mrtg.galaxybackbone.com.ng:8081/10.0.35.73_gigabitethernet0_0_0.html
+STATE HOUSE,https://mrtg.galaxybackbone.com.ng:8081/10.10.207.58_gigabitethernet0_0_1.html
+NAVY,https://mrtg.galaxybackbone.com.ng:8081/10.0.42.145_gigabitethernet0_0_0.html
+NAF,https://mrtg.galaxybackbone.com.ng:8081/10.0.42.153_gigabitethernet0_0_0.html
+DHQ,https://mrtg.galaxybackbone.com.ng:8081/10.0.42.169_gigabitethernet0_0_0.html
+egovcenter,https://mrtg.galaxybackbone.com.ng:8081/10.0.50.73_gigabitethernet0_0_0.html
+UBEC,https://mrtg.galaxybackbone.com.ng:8081/10.0.35.49_gigabitethernet0_0_0.html
+Jaiz Bank,https://mrtg.galaxybackbone.com.ng:8081/10.0.28.30_gigabitethernet0_0_15.html
+"TAJ Bank, Ahmadu Bello",https://mrtg.galaxybackbone.com.ng:8081/10.0.44.97_gigabitethernet0_0_0.html
+NSPM,https://mrtg.galaxybackbone.com.ng:8081/10.0.45.89_gigabitethernet0_0_0.html
+FCSC,https://mrtg.galaxybackbone.com.ng:8081/10.0.35.25_gigabitethernet0_0_0.html
+"CHEC, Akwanga road",https://mrtg.galaxybackbone.com.ng:8081/10.0.210.2_gigabitethernet0_0_0.html
+PENCOM HQ,https://mrtg.galaxybackbone.com.ng:8081/10.0.34.9_gigabitethernet0_0_0.html
+NNPC CBT Port Harcourt,https://mrtg.galaxybackbone.com.ng:8081/10.10.232.218_gigabitethernet0_0_0.html
+Fraser Suites,https://mrtg.galaxybackbone.com.ng:8081/10.0.28.30_gigabitethernet0_0_16.html
+NDC HQ,https://mrtg.galaxybackbone.com.ng:8081/10.0.37.153/10.0.37.153_gigabitethernet0_0_0.html
+NDC Piwoyi,https://mrtg.galaxybackbone.com.ng:8081/10.0.39.90/10.0.39.90_gigabitethernet0_0_0.html
+FIRS HQ,https://mrtg.galaxybackbone.com.ng:8081/10.10.206.30/10.10.206.30_gigabitethernet0_0.html
+GACN,https://mrtg.galaxybackbone.com.ng:8081/10.0.43.233/10.0.43.233_gigabitethernet0_0_0.html
+FCDA,https://mrtg.galaxybackbone.com.ng:8081/10.0.43.73/10.0.43.73_gigabitethernet0_0_0.html
+NITDA Annex,https://mrtg.galaxybackbone.com.ng:8081/10.0.43.177/10.0.43.177_gigabitethernet0_0_0.html
+Law School Bwari,https://mrtg.galaxybackbone.com.ng:8081/10.0.50.33/10.0.50.33_gigabitethernet0_0_0.html
+Customs HQ,https://mrtg.galaxybackbone.com.ng:8081/10.0.43.209/10.0.43.209_gigabitethernet0_0_0.html
+NAICOM,https://mrtg.galaxybackbone.com.ng:8081/10.0.42.105/10.0.42.105_gigabitethernet0_0_1.html
+ONSA White House,https://mrtg.galaxybackbone.com.ng:8081/10.0.43.217/_gigabitethernet0_0_0.html
+NJC Kaduna,https://mrtg.galaxybackbone.com.ng:8081/10.10.224.46/10.10.224.46_gigabitethernet0_0_0.html
+Women Center,https://mrtg.galaxybackbone.com.ng:8081/10.0.41.78/10.0.41.78_gigabitethernet0_0_0.html
+Fed Min of Works,https://mrtg.galaxybackbone.com.ng:8081/10.0.41.62/10.0.41.62_gigabitethernet0_0_0.html
+ONSA,https://mrtg.galaxybackbone.com.ng:8081/10.0.41.94/10.0.41.94_gigabitethernet0_0_0.html
+Corrections HQ,https://mrtg.galaxybackbone.com.ng:8081/10.0.252.81/10.0.252.81_gigabitethernet0_0_0.html
+NIGCOMSAT,https://mrtg.galaxybackbone.com.ng:8081/10.0.39.34/10.0.39.34_gigabitethernet0_0_0.html
+NABDA,https://mrtg.galaxybackbone.com.ng:8081/10.0.39.42/10.0.39.42_gigabitethernet0_0_0.html
+FCTA,https://mrtg.galaxybackbone.com.ng:8081/10.0.41.126/10.0.41.126_gigabitethernet0_0_0.html
+NIMET,https://mrtg.galaxybackbone.com.ng:8081/10.0.252.33/10.0.252.33_gigabitethernet0_0_0.html
+AIB,https://mrtg.galaxybackbone.com.ng:8081/10.0.39.66/10.0.39.66_gigabitethernet0_0_0.html
+FAAN,https://mrtg.galaxybackbone.com.ng:8081/10.0.39.58/10.0.39.58_gigabitethernet0_0_0.html
+BPE,https://mrtg.galaxybackbone.com.ng:8081/10.0.41.38/10.0.41.38_gigabitethernet0_0_0.html
+NIS,https://mrtg.galaxybackbone.com.ng:8081/10.0.39.118/10.0.39.118_gigabitethernet0_0_0.html
+NPC,https://mrtg.galaxybackbone.com.ng:8081/10.0.38.153/10.0.38.153_gigabitethernet0_0_0.html
+OAGF,https://mrtg.galaxybackbone.com.ng:8081/10.0.42.97/10.0.42.97_gigabitethernet0_0_0.html
+NEPZA,https://mrtg.galaxybackbone.com.ng:8081/10.0.34.65/10.0.34.65_gigabitethernet0_0_0.html
+NEMA,https://mrtg.galaxybackbone.com.ng:8081/10.0.34.49/10.0.34.49_gigabitethernet0_0_0.html
+NIPC,https://mrtg.galaxybackbone.com.ng:8081/10.0.34.121/10.0.34.121_gigabitethernet0_0_0.html
+TCN,https://mrtg.galaxybackbone.com.ng:8081/10.0.34.57/10.0.34.57_gigabitethernet0_0_0.html
+NCC,https://mrtg.galaxybackbone.com.ng:8081/10.0.34.89/10.0.34.89_gigabitethernet0_0_0.html
+NEPC,https://mrtg.galaxybackbone.com.ng:8081/10.0.34.129/10.0.34.129_gigabitethernet0_0_0.html
+EFCC,https://mrtg.galaxybackbone.com.ng:8081/10.0.34.25/10.0.34.25_gigabitethernet0_0_0.html
+PCC,https://mrtg.galaxybackbone.com.ng:8081/10.0.34.169/10.0.34.169_gigabitethernet0_0_0.html
+BoundaryComm,https://mrtg.galaxybackbone.com.ng:8081/10.0.34.209/10.0.34.209_gigabitethernet0_0_0.html
+Abuja Clnics Maitama,https://mrtg.galaxybackbone.com.ng:8081/10.0.35.1/10.0.35.1_gigabitethernet0_0_0.html
+FERMA,https://mrtg.galaxybackbone.com.ng:8081/10.0.35.185/10.0.35.185_gigabitethernet0_0_0.html
+FM Lands New,https://mrtg.galaxybackbone.com.ng:8081/10.0.36.57/10.0.36.57_gigabitethernet0_0_2.html
+FM Lands Old,https://mrtg.galaxybackbone.com.ng:8081/10.0.36.49/10.0.36.49_gigabitethernet0_0_0.html
+PEF HQ,https://mrtg.galaxybackbone.com.ng:8081/10.0.38.161/10.0.38.161_gigabitethernet0_0_0.html
+FM Environment,https://mrtg.galaxybackbone.com.ng:8081/10.0.36.41/10.0.36.41_gigabitethernet0_0_0.html
+NAFDAC,https://mrtg.galaxybackbone.com.ng:8081/10.0.35.121/10.0.35.121_gigabitethernet0_0_0.html
+ARCN,https://mrtg.galaxybackbone.com.ng:8081/10.0.36.65/10.0.36.65_gigabitethernet0_0_0.html
+SON,https://mrtg.galaxybackbone.com.ng:8081/10.0.35.97/10.0.35.97_gigabitethernet0_0_0.html
+PPPRA,https://mrtg.galaxybackbone.com.ng:8081/10.0.36.209/10.0.36.209_gigabitethernet0_0_0.html
+MPR,https://mrtg.galaxybackbone.com.ng:8081/10.0.37.241/10.0.37.241_gigabitethernet0_0_0.html
+Audit House,https://mrtg.galaxybackbone.com.ng:8081/10.0.37.185/10.0.37.185_gigabitethernet0_0_0.html
+ECN,https://mrtg.galaxybackbone.com.ng:8081/10.0.36.201/10.0.36.201_gigabitethernet0_0_0.html
+RMAFC,https://mrtg.galaxybackbone.com.ng:8081/10.0.37.105/10.0.37.105_gigabitethernet0_0_0.html
+NEXIM,https://mrtg.galaxybackbone.com.ng:8081/10.0.36.193/10.0.36.193_gigabitethernet0_0_0.html
+Court of Appeal,https://mrtg.galaxybackbone.com.ng:8081/10.0.38.73/10.0.38.73_gigabitethernet0_0_0.html
+Interra,https://mrtg.galaxybackbone.com.ng:8081/10.0.45.41/10.0.45.41_gigabitethernet0_0_0.html
+FMJ,https://mrtg.galaxybackbone.com.ng:8081/10.0.36.137/10.0.36.137_gigabitethernet0_0_0.html
+NPF,https://mrtg.galaxybackbone.com.ng:8081/10.0.38.81/10.0.38.81_gigabitethernet0_0_0.html
+NSITF,https://mrtg.galaxybackbone.com.ng:8081/10.0.37.113/10.0.37.113_gigabitethernet0_0_0.html
+Huawei Office,https://mrtg.galaxybackbone.com.ng:8081/10.0.37.121/10.0.37.121_gigabitethernet0_0_0.html
+DIA,https://mrtg.galaxybackbone.com.ng:8081/10.0.36.129/10.0.36.129_gigabitethernet0_0_0.html
+Budget Office,https://mrtg.galaxybackbone.com.ng:8081/10.0.38.137/10.0.38.137_gigabitethernet0_0_0.html
+National Library,https://mrtg.galaxybackbone.com.ng:8081/10.0.37.196/10.0.37.196_gigabitethernet0_0_0.html
+NJC HQ,https://mrtg.galaxybackbone.com.ng:8081/10.0.37.9/10.0.37.9_gigabitethernet0_0_0.html
+NSIO,https://mrtg.galaxybackbone.com.ng:8081/10.0.44.201/10.0.44.201_gigabitethernet0_0_0.html
+Surveyor General,https://mrtg.galaxybackbone.com.ng:8081/10.0.42.121/10.0.42.121_gigabitethernet0_0_0.html
+Fed Min of Agric,https://mrtg.galaxybackbone.com.ng:8081/10.0.43.65/10.0.43.65_gigabitethernet0_0_0.html
+NCPC,https://mrtg.galaxybackbone.com.ng:8081/10.0.42.129/10.0.42.129_gigabitethernet0_0_0.html
+SMEDAN,https://mrtg.galaxybackbone.com.ng:8081/10.0.43.41/10.0.43.41_gigabitethernet0_0_0.html
+NTA,https://mrtg.galaxybackbone.com.ng:8081/10.0.42.137/10.0.43.137_gigabitethernet0_0_0.html
+NDIC,https://mrtg.galaxybackbone.com.ng:8081/10.0.43.97/10.0.43.97_gigabitethernet0_0_0.html
+NITDA HQ,https://mrtg.galaxybackbone.com.ng:8081/10.0.43.49/10.0.43.49_gigabitethernet0_0_0.html
+NITDA Lagos,https://mrtg.galaxybackbone.com.ng:8081/10.10.217.94/10.10.217.94_gigabitethernet0_0.html
+NNRA,https://mrtg.galaxybackbone.com.ng:8081/10.0.38.177_gigabitethernet0_0_0.html
+NIGCOMSAT,https://mrtg.galaxybackbone.com.ng:8081/10.0.252.113/10.0.252.113_gigabitethernet0_0_0.html
+NPSC,https://mrtg.galaxybackbone.com.ng:8081/10.0.37.225_gigabitethernet2_0_0.html
+CAC,https://mrtg.galaxybackbone.com.ng:8081/10.0.46.33/10.0.46.33_gigabitethernet0_0_0.html
+NGMC,https://mrtg.galaxybackbone.com.ng:8081/10.0.46.9/10.0.46.9_gigabitethernet0_0_0.html
+PAF,https://mrtg.galaxybackbone.com.ng:8081/ 10.0.39.54/10.0.39.54_gigabitethernet0_0_0.html
+NIPOST Area 10,https://mrtg.galaxybackbone.com.ng:8081/10.0.46.185/10.0.46.185_gigabitethernet0_0_0.html
+NCC Mbora,https://mrtg.galaxybackbone.com.ng:8081/10.0.45.169/10.0.45.169_gigabitethernet0_0_2.html
+MOT,https://mrtg.galaxybackbone.com.ng:8081/10.0.37.233/10.0.37.233_gigabitethernet0_0_0.html
+NSSEC,https://mrtg.galaxybackbone.com.ng:8081/10.0.46.193/10.0.46.193_gigabitethernet0_0_0.html
+NAN,https://mrtg.galaxybackbone.com.ng:8081/10.0.42.17/10.0.42.17_gigabitethernet0_0_0.html
+NDE,https://mrtg.galaxybackbone.com.ng:8081/10.0.35.89/10.0.35.89_gigabitethernet0_0_0.html
+FMWA,https://mrtg.galaxybackbone.com.ng:8081/10.0.45.86/10.0.45.86_gigabitethernet0_0_0.html
+NAPET-KRPC,https://mrtg.galaxybackbone.com.ng:8081/10.160.64.17/10.160.64.17_gigabitethernet0_0_0.html
+NAPET-WRPC,https://mrtg.galaxybackbone.com.ng:8081/10.10.232.233/10.10.232.233_gigabitethernet0_0_0.html
+NAPET PH,https://mrtg.galaxybackbone.com.ng:8081/10.10.233.234/10.10.233.234_gigabitethernet0_0_2.html
+AEPB,https://mrtg.galaxybackbone.com.ng:8081/10.0.37.161/10.0.37.161_gigabitethernet0_0_0.html
+BCDA,https://mrtg.galaxybackbone.com.ng:8081/10.0.190.185/10.0.190.185_gigabitethernet0_0_0.html
+SCN,https://mrtg.galaxybackbone.com.ng:8081/10.0.42.113/10.0.42.113_gigabitethernet0_0_0.html
+TETFUND,https://mrtg.galaxybackbone.com.ng:8081/10.0.34.73_gigabitethernet0_0_0.html
+NPA Lagos Port Complex,https://mrtg.galaxybackbone.com.ng:8081/10.8.162.81/10.8.162.81_gigabitethernet0_0_0.html
+Ministry of Power,https://mrtg.galaxybackbone.com.ng:8081/10.0.44.249/10.0.44.249_gigabitethernet0_0_0.html
+JAMB,https://mrtg.galaxybackbone.com.ng:8081/10.0.50.17/10.0.50.17_gigabitethernet0_0_0.html
+NAPET ENSERVE,https://mrtg.galaxybackbone.com.ng:8081/10.8.162.89/10.8.162.89_gigabitethernet0_0_0.html
+Ministry of Defence,https://mrtg.galaxybackbone.com.ng:8081/10.10.206.66/10.10.206.66_gigabitethernet0_0_0.html
+NAPET Mukhtar El- Yakub,https://mrtg.galaxybackbone.com.ng:8081/10.0.191.41/10.0.191.41_gigabitethernet0_0_0.html
+Customary court Of Appeal Utako,https://mrtg.galaxybackbone.com.ng:8081/10.0.191.121_gigabitethernet0_0_0.html
+MOTA ENGIL,https://mrtg.galaxybackbone.com.ng:8081/10.8.162.153_gigabitethernet0_0_5.html
+Fed Min of Housing,https://mrtg.galaxybackbone.com.ng:8081/10.0.36.57/10.0.36.57_gigabitethernet0_0_2.html
+NUIMC-NAPET,https://mrtg.galaxybackbone.com.ng:8081/10.0.190.145_gigabitethernet0_0_0.html
+NCAA,https://mrtg.galaxybackbone.com.ng:8081/10.0.39.81_gigabitethernet0_0_0.html
+WRPC-NNPC,https://mrtg.galaxybackbone.com.ng:8081/10.10.232.233/10.10.232.233_gigabitethernet0_0_0.html
+KRPC-NNPC,https://mrtg.galaxybackbone.com.ng:8081/10.160.64.17/10.160.64.17_gigabitethernet0_0_0.html
+nadf1,https://mrtg.galaxybackbone.com.ng:8081/10.0.191.129_gigabitethernet0_0_4.html
+,
+,
+,
+,
+,

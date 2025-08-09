@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Plus, Building2 } from 'lucide-react';
 import { useMDAs, useDeleteMDA } from '@/hooks/useMDAs';
 import { useLayoutPreference } from '@/hooks/useLayoutPreference';
+import { usePagination } from '@/hooks/usePagination';
 import DeleteConfirmationModal from '@/components/modals/DeleteConfirmationModal';
 import MDACardView from '@/components/MDACardView';
 import MDATableView from '@/components/MDATableView';
 import LayoutToggle from '@/components/LayoutToggle';
+import Pagination from '@/components/Pagination';
 import type { MDA } from '@/services/adminService';
 
 export default function MDAManagement() {
@@ -50,6 +52,20 @@ export default function MDAManagement() {
                          (selectedStatus === 'Active' && mda.isActive) || 
                          (selectedStatus === 'Inactive' && !mda.isActive);
     return matchesSearch && matchesStatus;
+  });
+
+  // Pagination
+  const {
+    currentPage,
+    itemsPerPage,
+    totalPages,
+    totalItems,
+    paginatedData: paginatedMDAs,
+    setCurrentPage,
+    setItemsPerPage
+  } = usePagination({
+    data: filteredMDAs,
+    initialItemsPerPage: 10
   });
 
   const activeMDAs = mdas.filter(mda => mda.isActive).length;
@@ -177,14 +193,14 @@ export default function MDAManagement() {
       {/* MDA Display */}
       {currentLayout === 'card' ? (
         <MDACardView
-          mdas={filteredMDAs}
+          mdas={paginatedMDAs}
           onUpdateMDA={handleUpdateMDA}
           onDeleteMDA={handleDeleteMDA}
           isDeleting={deleteMDAMutation.isPending}
         />
       ) : (
         <MDATableView
-          mdas={filteredMDAs}
+          mdas={paginatedMDAs}
           onUpdateMDA={handleUpdateMDA}
           onDeleteMDA={handleDeleteMDA}
           isDeleting={deleteMDAMutation.isPending}
@@ -192,22 +208,18 @@ export default function MDAManagement() {
       )}
 
       {/* Pagination */}
-      <div className="flex items-center justify-between bg-white px-6 py-3 border border-gray-200 rounded-lg">
-        <div className="text-sm text-gray-700">
-          Showing {filteredMDAs.length} of {mdas.length} MDAs
-        </div>
-        <div className="flex items-center space-x-2">
-          <button className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">
-            Previous
-          </button>
-          <button className="px-3 py-1 bg-blue-500 text-white rounded text-sm">
-            1
-          </button>
-          <button className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">
-            Next
-          </button>
-        </div>
-      </div>
+      {totalItems > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+          onItemsPerPageChange={setItemsPerPage}
+          showItemsPerPage={true}
+          itemsPerPageOptions={[5, 10, 25, 50, 100]}
+        />
+      )}
 
       {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal
