@@ -6,6 +6,7 @@ import {
 import { useUsers, useDeleteUser } from "@/hooks/useUsers";
 import { useMDAs } from "@/hooks/useMDAs";
 import { useLayoutPreference } from "@/hooks/useLayoutPreference";
+import { usePagination } from "@/hooks/usePagination";
 import CreateUserModal from "@/components/modals/CreateUserModal";
 import UpdateUserModal from "@/components/modals/UpdateUserModal";
 import DeleteConfirmationModal from "@/components/modals/DeleteConfirmationModal";
@@ -13,6 +14,7 @@ import { ResetPasswordModal } from "@/components/modals/ResetPasswordModal";
 import UserCardView from "@/components/UserCardView";
 import UserTableView from "@/components/UserTableView";
 import LayoutToggle from "@/components/LayoutToggle";
+import Pagination from "@/components/Pagination";
 import type { AdminUser } from "@/services/adminService";
 
 export default function UserManagement() {
@@ -78,7 +80,19 @@ export default function UserManagement() {
     return matchesSearch && matchesMDA && matchesStatus;
   });
 
-  console.log(filteredUsers);
+  // Pagination
+  const {
+    currentPage,
+    itemsPerPage,
+    totalPages,
+    totalItems,
+    paginatedData: paginatedUsers,
+    setCurrentPage,
+    setItemsPerPage
+  } = usePagination({
+    data: filteredUsers,
+    initialItemsPerPage: 10
+  });
 
   if (usersLoading || mdasLoading) {
     return (
@@ -168,7 +182,7 @@ export default function UserManagement() {
       {/* Users Display */}
       {currentLayout === 'card' ? (
         <UserCardView
-          users={filteredUsers}
+          users={paginatedUsers}
           onUpdateUser={handleUpdateUser}
           onDeleteUser={handleDeleteUser}
           onResetPassword={handleResetPassword}
@@ -176,7 +190,7 @@ export default function UserManagement() {
         />
       ) : (
         <UserTableView
-          users={filteredUsers}
+          users={paginatedUsers}
           onUpdateUser={handleUpdateUser}
           onDeleteUser={handleDeleteUser}
           onResetPassword={handleResetPassword}
@@ -185,22 +199,18 @@ export default function UserManagement() {
       )}
 
       {/* Pagination */}
-      <div className="flex items-center justify-between bg-white px-6 py-3 border border-gray-200 rounded-lg">
-        <div className="text-sm text-gray-700">
-          Showing {filteredUsers.length} of {users.length} users
-        </div>
-        <div className="flex items-center space-x-2">
-          <button className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">
-            Previous
-          </button>
-          <button className="px-3 py-1 bg-blue-500 text-white rounded text-sm">
-            1
-          </button>
-          <button className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">
-            Next
-          </button>
-        </div>
-      </div>
+      {totalItems > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+          onItemsPerPageChange={setItemsPerPage}
+          showItemsPerPage={true}
+          itemsPerPageOptions={[5, 10, 25, 50, 100]}
+        />
+      )}
 
       {/* Create User Modal */}
       <CreateUserModal
