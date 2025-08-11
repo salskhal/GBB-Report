@@ -13,7 +13,10 @@
     "import-mdas": "node src/scripts/import-mdas-from-csv.js",
     "import-users": "node src/scripts/import-users-from-csv.js",
     "fix-indexes": "node src/scripts/fix-indexes-only.js",
-    "change-passwords": "node src/scripts/change-all-passwords.js"
+    "change-passwords": "node src/scripts/change-all-passwords.js",
+    "diagnose-logging": "node src/scripts/diagnose-activity-logging.js",
+    "test-middleware": "node src/scripts/test-activity-middleware.js",
+    "fix-null-passwords": "node src/scripts/fix-null-passwords.js"
   },
   "keywords": [],
   "author": "",

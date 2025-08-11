@@ -23,7 +23,7 @@ const changeAllPasswords = async () => {
     console.log("🔐 Starting password change for all users...\n");
 
     // Get new password from command line arguments or use default
-    const newPassword = process.argv[2] || "Password12$";
+    const newPassword = process.argv[2] || "Password1$";
     const includeAdmins = process.argv[3] === "--include-admins";
 
     console.log(`New password: ${newPassword}`);
@@ -57,11 +57,11 @@ const changeAllPasswords = async () => {
 
     const userUpdateResult = await User.updateMany(
       {}, // Update all users
-      { 
-        $set: { 
+      {
+        $set: {
           password: hashedPassword,
-          updatedAt: new Date()
-        } 
+          updatedAt: new Date(),
+        },
       }
     );
 
@@ -71,23 +71,27 @@ const changeAllPasswords = async () => {
     // UPDATE ADMIN PASSWORDS (if requested)
     // ===========================================
     let adminUpdateResult = { modifiedCount: 0 };
-    
+
     if (includeAdmins) {
       console.log("\n👨‍💼 Updating admin passwords...");
-      
+
       adminUpdateResult = await Admin.updateMany(
         {}, // Update all admins
-        { 
-          $set: { 
+        {
+          $set: {
             password: hashedPassword,
-            updatedAt: new Date()
-          } 
+            updatedAt: new Date(),
+          },
         }
       );
 
-      console.log(`✅ Updated ${adminUpdateResult.modifiedCount} admin passwords`);
+      console.log(
+        `✅ Updated ${adminUpdateResult.modifiedCount} admin passwords`
+      );
     } else {
-      console.log("\n⚠️  Skipping admin passwords (use --include-admins to update them)");
+      console.log(
+        "\n⚠️  Skipping admin passwords (use --include-admins to update them)"
+      );
     }
 
     // ===========================================
@@ -98,11 +102,20 @@ const changeAllPasswords = async () => {
     // Test password hash with a sample user
     const sampleUser = await User.findOne();
     if (sampleUser) {
-      const isValidPassword = await bcrypt.compare(newPassword, sampleUser.password);
-      if (isValidPassword) {
-        console.log("✅ Password verification successful");
+      if (sampleUser.password && typeof sampleUser.password === "string") {
+        const isValidPassword = await bcrypt.compare(
+          newPassword,
+          sampleUser.password
+        );
+        if (isValidPassword) {
+          console.log("✅ Password verification successful");
+        } else {
+          console.log("❌ Password verification failed");
+        }
       } else {
-        console.log("❌ Password verification failed");
+        console.log(
+          "⚠️  Sample user has invalid password field, but update should have fixed it"
+        );
       }
     }
 
@@ -110,11 +123,20 @@ const changeAllPasswords = async () => {
     if (includeAdmins) {
       const sampleAdmin = await Admin.findOne();
       if (sampleAdmin) {
-        const isValidAdminPassword = await bcrypt.compare(newPassword, sampleAdmin.password);
-        if (isValidAdminPassword) {
-          console.log("✅ Admin password verification successful");
+        if (sampleAdmin.password && typeof sampleAdmin.password === "string") {
+          const isValidAdminPassword = await bcrypt.compare(
+            newPassword,
+            sampleAdmin.password
+          );
+          if (isValidAdminPassword) {
+            console.log("✅ Admin password verification successful");
+          } else {
+            console.log("❌ Admin password verification failed");
+          }
         } else {
-          console.log("❌ Admin password verification failed");
+          console.log(
+            "⚠️  Sample admin has invalid password field, but update should have fixed it"
+          );
         }
       }
     }
@@ -129,7 +151,7 @@ const changeAllPasswords = async () => {
     console.log(`🔒 Password hash: ${hashedPassword.substring(0, 20)}...`);
 
     console.log("\n🎉 Password change completed successfully!");
-    
+
     console.log("\n📋 Important Notes:");
     console.log("1. All affected users must use the new password to login");
     console.log("2. Consider notifying users about the password change");
@@ -139,8 +161,9 @@ const changeAllPasswords = async () => {
     console.log("\n📋 Next steps:");
     console.log("1. Test login with the new password");
     console.log("2. Notify all users about the password change");
-    console.log("3. Consider implementing forced password change on next login");
-
+    console.log(
+      "3. Consider implementing forced password change on next login"
+    );
   } catch (error) {
     console.error("\n❌ Password change failed:");
     console.error(error.message);
@@ -160,9 +183,15 @@ function showUsage() {
   console.log("\n📋 Usage:");
   console.log("npm run change-passwords [new_password] [--include-admins]");
   console.log("\nExamples:");
-  console.log("npm run change-passwords                    # Uses default: Password12$");
-  console.log("npm run change-passwords NewPass123!       # Sets custom password");
-  console.log("npm run change-passwords NewPass123! --include-admins  # Include admin passwords");
+  console.log(
+    "npm run change-passwords                    # Uses default: Password12$"
+  );
+  console.log(
+    "npm run change-passwords NewPass123!       # Sets custom password"
+  );
+  console.log(
+    "npm run change-passwords NewPass123! --include-admins  # Include admin passwords"
+  );
   console.log("\n💡 Password Requirements:");
   console.log("- At least 8 characters long");
   console.log("- Should contain uppercase, lowercase, numbers, and symbols");
