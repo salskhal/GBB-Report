@@ -11,7 +11,9 @@
     "seed": "node src/seed/seed.js",
     "clean-all": "node src/scripts/clean-all-collections.js",
     "import-mdas": "node src/scripts/import-mdas-from-csv.js",
-    "import-users": "node src/scripts/import-users-from-csv.js"
+    "import-users": "node src/scripts/import-users-from-csv.js",
+    "fix-indexes": "node src/scripts/fix-indexes-only.js",
+    "change-passwords": "node src/scripts/change-all-passwords.js"
   },
   "keywords": [],
   "author": "",
