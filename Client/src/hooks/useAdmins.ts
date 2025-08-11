@@ -1,10 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminService, type CreateAdminRequest, type UpdateAdminRequest } from '@/services/adminService';
 
-export const useAdmins = () => {
+export const useAdmins = (params?: {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: string;
+  search?: string;
+  role?: string;
+  isActive?: string;
+}) => {
   return useQuery({
-    queryKey: ['admins'],
-    queryFn: adminService.getAllAdmins,
+    queryKey: ['admins', params],
+    queryFn: () => adminService.getAllAdmins(params),
   });
 };
 
@@ -22,6 +30,7 @@ export const useCreateAdmin = () => {
   return useMutation({
     mutationFn: (adminData: CreateAdminRequest) => adminService.createAdmin(adminData),
     onSuccess: () => {
+      // Invalidate all admin queries to refresh pagination and data
       queryClient.invalidateQueries({ queryKey: ['admins'] });
     },
   });
@@ -34,6 +43,7 @@ export const useUpdateAdmin = () => {
     mutationFn: ({ id, adminData }: { id: string; adminData: UpdateAdminRequest }) => 
       adminService.updateAdmin(id, adminData),
     onSuccess: () => {
+      // Invalidate all admin queries to refresh pagination and data
       queryClient.invalidateQueries({ queryKey: ['admins'] });
     },
   });
@@ -45,6 +55,7 @@ export const useDeleteAdmin = () => {
   return useMutation({
     mutationFn: (id: string) => adminService.deleteAdmin(id),
     onSuccess: () => {
+      // Invalidate all admin queries to refresh pagination and data
       queryClient.invalidateQueries({ queryKey: ['admins'] });
     },
   });

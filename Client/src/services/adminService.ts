@@ -183,9 +183,30 @@ export const adminService = {
   },
 
   // Admin Management
-  getAllAdmins: async (): Promise<Admin[]> => {
-    const response = await api.get('/admin/admins');
-    return response.data.data;
+  getAllAdmins: async (params?: {
+    page?: number;
+    limit?: number;
+    sortBy?: string;
+    sortOrder?: string;
+    search?: string;
+    role?: string;
+    isActive?: string;
+  }): Promise<{ admins: Admin[]; pagination: { currentPage: number; totalPages: number; totalItems: number; itemsPerPage: number } }> => {
+    const queryParams = new URLSearchParams();
+    
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
+    if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.role) queryParams.append('role', params.role);
+    if (params?.isActive) queryParams.append('isActive', params.isActive);
+
+    const response = await api.get(`/admin/admins?${queryParams.toString()}`);
+    return {
+      admins: response.data.data,
+      pagination: response.data.pagination
+    };
   },
 
   getAdmin: async (id: string): Promise<Admin> => {
